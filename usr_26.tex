@@ -1,0 +1,224 @@
+\section{Repeating}
+An editing task is hardly ever unstructured.
+A change often needs to be made several times.
+In this chapter a number of useful ways to repeat a change will be explained.
+\localtableofcontentswithrelativedepth{+1}
+\subsection{Repeating with Visual mode}
+Visual mode is very handy for making a change in any sequence of lines.
+You can see the highlighted text, thus you can check if the correct lines are changed.
+But making the selection takes some typing.
+The "\verb!gv!" command selects the same area again.
+This allows you to do another operation on the same text.
+
+Suppose you have some lines where you want to change "2001" to "2002" and "2000" to "2001":
+
+\begin{Verbatim}[samepage=true]
+    The financial results for 2001 are better 
+    than for 2000.  The income increased by 50%, 
+    even though 2001 had more rain than 2000. 
+                2000        2001 
+    income      45,403      66,234 
+\end{Verbatim}
+
+First change "2001" to "2002".  Select the lines in Visual mode, and use:
+
+\begin{Verbatim}[samepage=true]
+ :s/2001/2002/g
+\end{Verbatim}
+
+Now use "\verb!gv!" to reselect the same text.
+It doesn't matter where the cursor is.
+Then use "\verb!:s/2000/2001/g!" to make the second change.
+
+Obviously, you can repeat these changes several times.
+\subsection{Add and subtract}
+When repeating the change of one number into another, you often have a fixed offset.
+In the example above, one was added to each year.
+Instead of typing a substitute command for each year that appears, the CTRL-A command can be used.
+
+Using the same text as above, search for a year:
+
+\begin{Verbatim}[samepage=true]
+ /19[0-9][0-9]\|20[0-9][0-9]
+\end{Verbatim}
+
+Now press CTRL-A.
+The year will be increased by one:
+
+\begin{Verbatim}[samepage=true]
+    The financial results for 2002 are better 
+    than for 2000.  The income increased by 50%, 
+    even though 2001 had more rain than 2000. 
+                2000        2001 
+    income      45,403      66,234 
+\end{Verbatim}
+
+Use "\verb!n!" to find the next year, and press "\verb!.!" to repeat the CTRL-A ("\verb!.!" is a bit quicker to type).
+Repeat "\verb!n!" and "\verb!.!" for all years that appear.
+
+Hint: set the 'hlsearch' option to see the matches you are going to change, then you can look ahead and do it faster.
+
+Adding more than one can be done by prepending the number to CTRL-A.
+Suppose you have this list:
+
+\begin{Verbatim}[samepage=true]
+    1.  item four 
+    2.  item five 
+    3.  item six 
+\end{Verbatim}
+
+Move the cursor to "1." and type:
+
+\begin{Verbatim}[samepage=true]
+ 3 CTRL-A
+\end{Verbatim}
+
+The "1." will change to "4.".
+Again, you can use "\verb!.!" to repeat this on the other numbers.
+
+Another example:
+
+\begin{Verbatim}[samepage=true]
+    006 foo bar 
+    007 foo bar 
+\end{Verbatim}
+
+Using CTRL-A on these numbers results in:
+
+\begin{Verbatim}[samepage=true]
+    007 foo bar 
+    010 foo bar 
+\end{Verbatim}
+
+7 plus one is 10?  What happened here is that Vim recognized "007" as an octal number, because there is a leading zero.
+This notation is often used in C programs.
+If you do not want a number with leading zeros to be handled as octal, use this:
+
+\begin{Verbatim}[samepage=true]
+ :set nrformats-=octal
+\end{Verbatim}
+
+The CTRL-X command does subtraction in a similar way.
+\subsection{Making a change in many files}
+Suppose you have a variable called "\verb!x_cnt!" and you want to change it to "\verb!x_counter!".
+This variable is used in several of your C files.
+You need to change it in all files.
+This is how you do it.
+
+Put all the relevant files in the argument list:
+
+\begin{Verbatim}[samepage=true]
+ :args *.c
+\end{Verbatim}
+ 
+This finds all C files and edits the first one.
+Now you can perform a substitution command on all these files:
+
+\begin{Verbatim}[samepage=true]
+ :argdo %s/\<x_cnt\>/x_counter/ge | update
+\end{Verbatim}
+
+The "\verb!:argdo!" command takes an argument that is another command.
+That command will be executed on all files in the argument list.
+
+The "\verb!%s!" substitute command that follows works on all lines.
+It finds the word "\verb!x_cnt!" with "\verb!\<x_cnt\>!".
+The "\verb!\<!" and "\verb!\>!" are used to match the whole word only, and not "\verb!px_cnt!" or "\verb!x_cnt2!".
+
+The flags for the substitute command include "\verb!g!" to replace all occurrences of "\verb!x_cnt!" in the same line.
+The "\verb!e!" flag is used to avoid an error message when "\verb!x_cnt!" does not appear in the file.
+Otherwise "\verb!:argdo!" would abort on the first file where "\verb!x_cnt!" was not found.
+
+The "\verb!|!" separates two commands.
+The following "\verb!update!" command writes the file only if it was changed.
+If no "\verb!x_cnt!" was changed to "\verb!x_counter!" nothing happens.
+
+There is also the "\verb!:windo!" command, which executes its argument in all windows.
+And "\verb!:bufdo!" executes its argument on all buffers.
+Be careful with this, because you might have more files in the buffer list than you think.
+Check this with the "\verb!:buffers!" command (or "\verb!:ls!").
+\subsection{Using Vim from a shell script}
+Suppose you have a lot of files in which you need to change the string "-person-" to "Jones" and then print it.
+How do you do that?  One way is to do a lot of typing.
+The other is to write a shell script to do the work.
+
+The Vim editor does a superb job as a screen-oriented editor when using Normal mode commands.
+For batch processing, however, Normal mode commands do not result in clear, commented command files; so here you will use Ex mode instead.
+This mode gives you a nice command-line interface that makes it easy to put into a batch file.
+("Ex command" is just another name for a command-line (:) command.)
+
+The Ex mode commands you need are as follows:
+
+\begin{Verbatim}[samepage=true]
+ %s/-person-/Jones/g
+ write tempfile
+ quit
+\end{Verbatim}
+
+You put these commands in the file "\verb!change.vim!".
+Now to run the editor in batch mode, use this shell script:
+
+\begin{Verbatim}[samepage=true]
+ for file in *.txt; do
+   vim -e -s $file < change.vim
+   lpr -r tempfile
+ done
+\end{Verbatim}
+
+The for-done loop is a shell construct to repeat the two lines in between, while the \verb!$file! variable is set to a different file name each time.
+
+The second line runs the Vim editor in Ex mode (-e argument) on the file \verb!$file! and reads commands from the file "\verb!change.vim!".
+The -s argument tells Vim to operate in silent mode.
+In other words, do not keep outputting the :prompt, or any other prompt for that matter.
+
+The "\verb!lpr -r tempfile!" command prints the resulting "\verb!tempfile!" and deletes it (that's what the -r argument does).
+\subsubsection{Reading from stdin}
+Vim can read text on standard input.
+Since the normal way is to read commands there, you must tell Vim to read text instead.
+This is done by passing the "\verb!-!" argument in place of a file.
+Example:
+
+\begin{Verbatim}[samepage=true]
+ ls | vim -
+\end{Verbatim}
+
+This allows you to edit the output of the "\verb!ls!" command, without first saving the text in a file.
+
+If you use the standard input to read text from, you can use the "\verb!-S!" argument to read a script:
+
+\begin{Verbatim}[samepage=true]
+ producer | vim -S change.vim -
+\end{Verbatim}
+
+\subsubsection{Normal mode scripts}
+If you really want to use Normal mode commands in a script, you can use it like this:
+
+\begin{Verbatim}[samepage=true]
+ vim -s script file.txt ...
+\end{Verbatim}
+ 
+\emph{Note}: "\verb!-s!" has a different meaning when it is used without "\verb!-e!".
+Here it means to source the "\verb!script!" as Normal mode commands.
+When used with "\verb!-e!" it means to be silent, and doesn't use the next argument as a file name.
+
+The commands in "\verb!script!" are executed like you typed them.
+Don't forget that a line break is interpreted as pressing <Enter>.
+In Normal mode that moves the cursor to the next line.
+
+To create the script you can edit the script file and type the commands.
+You need to imagine what the result would be, which can be a bit difficult.
+Another way is to record the commands while you perform them manually.
+This is how you do that:
+
+\begin{Verbatim}[samepage=true]
+ vim -w script file.txt ...
+\end{Verbatim}
+
+All typed keys will be written to "\verb!script!".
+If you make a small mistake you can just continue and remember to edit the script later.
+
+The "\verb!-w!" argument appends to an existing script.
+That is good when you want to record the script bit by bit.
+If you want to start from scratch and start all over, use the "\verb!-W!" argument.
+It overwrites any existing file.
+\clearpage

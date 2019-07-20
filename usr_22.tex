@@ -1,0 +1,402 @@
+\section{Finding the file to edit}
+Files can be found everywhere.  So how do you find them?  Vim offers various
+ways to browse the directory tree.  There are commands to jump to a file that
+is mentioned in another.  And Vim remembers which files have been edited
+before.
+\localtableofcontentswithrelativedepth{+1}
+*22.1*    The file browser
+
+Vim has a plugin that makes it possible to edit a directory.  Try this:
+
+\begin{Verbatim}[samepage=true]
+ :edit .
+\end{Verbatim}
+
+Through the magic of autocommands and Vim scripts, the window will be filled with the contents of the directory.
+It looks like this:
+
+\begin{Verbatim}[samepage=true]
+  " ============================================================================ 
+  " Netrw Directory Listing                                        (netrw v109) 
+  "   Sorted by      name 
+  "   Sort sequence: [\/]$,\.h$,\.c$,\.cpp$,*,\.info$,\.swp$,\.o$\.obj$,\.bak$ 
+  "   Quick Help: <F1>:help  -:go up dir  D:delete  R:rename  s:sort-by  x:exec 
+  " ============================================================================ 
+  ../ 
+  ./ 
+  check/ 
+  Makefile 
+  autocmd.txt 
+  change.txt 
+  eval.txt~ 
+  filetype.txt~ 
+  help.txt.info 
+\end{Verbatim}
+
+You can see these items:
+
+\begin{enumerate}
+\item The name of the browsing tool and its version number
+\item The name of the browsing directory
+\item The method of sorting (may be by name, time, or size)
+\item How names are to be sorted (directories first, then \verb!*.h! files, \verb!*.c! files, etc)
+\item How to get help (use the <F1> key), and an abbreviated listing of available commands
+\item A listing of files, including "\verb!../!", which allows one to list the parent directory.
+\end{enumerate}
+
+If you have syntax highlighting enabled, the different parts are highlighted so as to make it easier to spot them.
+
+You can use Normal mode Vim commands to move around in the text.
+For example, move the cursor atop a file and press <Enter>; you will then be editing that file.
+To go back to the browser use "\verb!:edit .!" again, or use "\verb!:Explore!".
+CTRL-O also works.
+
+Try using <Enter> while the cursor is atop a directory name.
+The result is that the file browser moves into that directory and displays the items found there.
+Pressing <Enter> on the first directory "\verb!../!" moves you one level higher.
+Pressing "\verb!-!" does the same thing, without the need to move to the "\verb!../!" item first.
+
+You can press <F1> to get help on the things you can do in the netrw file browser.
+This is what you get:
+
+\begin{Verbatim}[samepage=true]
+    9. Directory Browsing     netrw-browse   netrw-dir   netrw-list   netrw-help 
+
+    MAPS                                                                  netrw-maps 
+          <F1>.............Help.......................................|\verb!:h netrw-help!|
+          <cr>.............Browsing...................................|\verb!:h netrw-cr!|
+          <del>............Deleting Files or Directories..............|\verb!:h netrw-delete!|
+          -................Going Up...................................|\verb!:h netrw--!|
+          a................Hiding Files or Directories................|\verb!:h netrw-a!|
+          mb...............Bookmarking a Directory....................|\verb!:h netrw-mb!|
+          gb...............Changing to a Bookmarked Directory.........|\verb!:h netrw-gb!|
+          c................Make Browsing Directory The Current Dir....|\verb!:h netrw-c!|
+          d................Make A New Directory.......................|\verb!:h netrw-d!|
+          D................Deleting Files or Directories..............|\verb!:h netrw-D!|
+          <c-h>............Edit File/Directory Hiding List............|\verb!:h netrw-ctrl-h!|
+          i................Change Listing Style.......................|\verb!:h netrw-i!|
+          <c-l>............Refreshing the Listing.....................|\verb!:h netrw-ctrl-l!|
+          o................Browsing with a Horizontal Split...........|\verb!:h netrw-o!|
+          p................Use Preview Window.........................|\verb!:h netrw-p!|
+          P................Edit in Previous Window....................|\verb!:h netrw-p!|
+          q................Listing Bookmarks and History..............|\verb!:h netrw-q!|
+          r................Reversing Sorting Order....................|\verb!:h netrw-r!|
+        (etc)
+\end{Verbatim}
+
+The <F1> key thus brings you to a netrw directory browsing contents help page.
+It's a regular help page; use the usual |CTRL-]| to jump to tagged help items and |\verb!:h CTRL-O!| to jump back.
+
+To select files for display and editing: (with the cursor is atop a filename)
+
+\begin{center} \begin{longtable}{c c c}
+				<enter> & Open the file in the current window. & |\verb!:h netrw-cr!| \\
+				o & Horizontally split window and display file & |\verb!:h netrw-o!| \\
+				v & Vertically split window and display file & |\verb!:h netrw-v!| \\
+				p & Use the |preview-window| & |\verb!:h netrw-p!| \\
+				P & Edit in the previous window & |\verb!:h netrw-P!| \\
+				t & Open file in a new tab & |\verb!:h netrw-t!|
+\end{longtable} \end{center}
+
+The following normal-mode commands may be used to control the browser display:
+
+\begin{center} \begin{longtable}{c l}
+				i & Controls listing style (thin, long, wide, and tree).  The long listing includes size and date information. \\
+				s & Repeatedly pressing s will change the way the files are sorted; one may sort on name, modification time, or size. \\
+				r & Reverse the sorting order. \\
+\end{longtable} \end{center}
+
+As a sampling of extra normal-mode commands:
+
+\begin{center} \begin{tabularx}{\textwidth}{c X}
+				c & Change Vim's notion of the current directory to be the same as the browser directory.  (see |\texttt{:h g:netrw\_keepdir!} to control this, too) \\
+				R & Rename the file or directory under the cursor; a prompt will be issued for the new name.\\
+				D & Delete the file or directory under the cursor; a confirmation request will be issued.\\
+				mb gb & Make bookmark/goto bookmark\\
+\end{tabularx} \end{center}
+
+One may also use command mode; again, just a sampling:
+
+\begin{center} \begin{longtable}{c l}
+				\verb!:Explore [directory]! & Browse specified/current directory \\
+				\verb!:NetrwSettings! & A comprehensive list of your current netrw settings with help linkage.
+\end{longtable} \end{center}
+
+The netrw browser is not limited to just your local machine; one may use urls such as:
+(that trailing \verb!/! is important)
+
+\begin{Verbatim}[samepage=true]
+ :Explore   ftp://somehost/path/to/dir/
+ :e scp://somehost/path/to/dir/
+\end{Verbatim}
+
+See |\verb!:h netrw-browse!| for more.
+\subsection{The current directory}
+
+Just like the shell, Vim has the concept of a current directory.
+Suppose you are in your home directory and want to edit several files in a directory "\verb!VeryLongFileName!".
+You could do:
+
+\begin{Verbatim}[samepage=true]
+ :edit VeryLongFileName/file1.txt
+ :edit VeryLongFileName/file2.txt
+ :edit VeryLongFileName/file3.txt
+\end{Verbatim}
+
+To avoid much of the typing, do this:
+
+\begin{Verbatim}[samepage=true]
+ :cd VeryLongFileName
+ :edit file1.txt
+ :edit file2.txt
+ :edit file3.txt
+\end{Verbatim}
+
+The "\verb!:cd!" command changes the current directory.
+You can see what the current directory is with the "\verb!:pwd!" command:
+
+\begin{Verbatim}[samepage=true]
+ :pwd
+ /home/Bram/VeryLongFileName
+\end{Verbatim}
+
+Vim remembers the last directory that you used.
+Use "\verb!cd -!" to go back to it.
+Example:
+
+\begin{Verbatim}[samepage=true]
+ :pwd
+ /home/Bram/VeryLongFileName
+ :cd /etc
+ :pwd
+ /etc
+ :cd -
+ :pwd
+ /home/Bram/VeryLongFileName
+ :cd -
+ :pwd
+ /etc
+\end{Verbatim}
+
+\subsubsection{Window local directory}
+When you split a window, both windows use the same current directory.
+When you want to edit a number of files somewhere else in the new window, you can make it use a different directory, without changing the current directory in the other window.
+This is called a local directory.
+
+\begin{Verbatim}[samepage=true]
+ :pwd
+ /home/Bram/VeryLongFileName
+ :split
+ :lcd /etc
+ :pwd
+ /etc
+ CTRL-W w
+ :pwd
+ /home/Bram/VeryLongFileName
+\end{Verbatim}
+
+So long as no "\verb!:lcd!" command has been used, all windows share the same current directory.
+Doing a "\verb!:cd!" command in one window will also change the current directory of the other window.
+
+For a window where "\verb!:lcd!" has been used a different current directory is remembered.
+Using "\verb!:cd!" or "\verb!:lcd!" in other windows will not change it.
+
+When using a "\verb!:cd!" command in a window that uses a different current directory, it will go back to using the shared directory.
+\subsection{Finding a file}
+You are editing a C program that contains this line:
+
+\begin{Verbatim}[samepage=true]
+    #include "inits.h" 
+\end{Verbatim}
+
+You want to see what is in that "\verb!inits.h!" file.
+Move the cursor on the name of the file and type:
+
+\begin{Verbatim}[samepage=true]
+ gf
+\end{Verbatim}
+
+Vim will find the file and edit it.
+
+What if the file is not in the current directory?  Vim will use the 'path' option to find the file.
+This option is a list of directory names where to look for your file.
+
+Suppose you have your include files located in "\verb!c:/prog/include!".
+This command will add it to the 'path' option:
+
+\begin{Verbatim}[samepage=true]
+ :set path+=c:/prog/include
+\end{Verbatim}
+
+This directory is an absolute path.
+No matter where you are, it will be the same place.
+What if you have located files in a subdirectory, below where the file is?  Then you can specify a relative path name.
+This starts with a dot:
+
+\begin{Verbatim}[samepage=true]
+ :set path+=./proto
+\end{Verbatim}
+
+This tells Vim to look in the directory "\verb!proto!", below the directory where the file in which you use "\verb!gf!" is.
+Thus using "\verb!gf!" on "\verb!inits.h!" will make Vim look for "\verb!proto/inits.h!", starting in the directory of the file.
+
+Without the "\verb!./!", thus "\verb!proto!", Vim would look in the "\verb!proto!" directory below the current directory.
+And the current directory might not be where the file that you are editing is located.
+
+The 'path' option allows specifying the directories where to search for files in many more ways.
+See the help on the 'path' option.
+
+The 'isfname' option is used to decide which characters are included in the file name, and which ones are not (e.g., the " character in the example above).
+
+When you know the file name, but it's not to be found in the file, you can type it:
+
+\begin{Verbatim}[samepage=true]
+ :find inits.h
+\end{Verbatim}
+
+Vim will then use the 'path' option to try and locate the file.
+This is the same as the "\verb!:edit!" command, except for the use of 'path'.
+
+To open the found file in a new window use CTRL-W f instead of "\verb!gf!", or use "\verb!:sfind!" instead of "\verb!:find!".
+
+A nice way to directly start Vim to edit a file somewhere in the 'path':
+
+\begin{Verbatim}[samepage=true]
+ vim "+find stdio.h"
+\end{Verbatim}
+
+This finds the file "\verb!stdio.h!" in your value of 'path'.
+The quotes are necessary to have one argument |\verb!:h -+c!|.
+\subsection{The buffer list}
+\label{The buffer list}
+The Vim editor uses the term buffer to describe a file being edited.
+Actually, a buffer is a copy of the file that you edit.
+When you finish changing the buffer, you write the contents of the buffer to the file.
+Buffers not only contain file contents, but also all the marks, settings, and other stuff that goes with it.
+\subsubsection{Hidden buffers}
+Suppose you are editing the file one.txt and need to edit the file two.txt.
+You could simply use "\verb!:edit two.txt!", but since you made changes to one.txt that won't work.
+You also don't want to write one.txt yet.
+Vim has a solution for you:
+
+\begin{Verbatim}[samepage=true]
+ :hide edit two.txt
+\end{Verbatim}
+
+The buffer "\verb!one.txt!" disappears from the screen, but Vim still knows that you are editing this buffer, so it keeps the modified text.
+This is called a hidden buffer: The buffer contains text, but you can't see it.
+
+The argument of "\verb!:hide!" is another command.
+"\verb!:hide!" makes that command behave as if the 'hidden' option was set.
+You could also set this option yourself.
+The effect is that when any buffer is abandoned, it becomes hidden.
+
+Be careful!  When you have hidden buffers with changes, don't exit Vim without making sure you have saved all the buffers.
+\subsubsection{Inactive buffers}
+When a buffer has been used once, Vim remembers some information about it.
+When it is not displayed in a window and it is not hidden, it is still in the buffer list.
+This is called an inactive buffer.
+Overview:
+
+\begin{center} \begin{tabular}{c l}
+				Active & Appears in a window, text loaded. \\
+				Hidden & Not in a window, text loaded. \\
+				Inactive & Not in a window, no text loaded. \\
+\end{tabular} \end{center}
+
+The inactive buffers are remembered, because Vim keeps information about them, like marks.
+And remembering the file name is useful too, so that you can see which files you have edited.
+And edit them again.
+
+\subsubsection{Listing buffers}
+View the buffer list with this command:
+
+\begin{Verbatim}[samepage=true]
+ :buffers
+\end{Verbatim}
+
+A command which does the same, is not so obvious to list buffers, but is much shorter to type:
+
+\begin{Verbatim}[samepage=true]
+ :ls
+\end{Verbatim}
+
+The output could look like this:
+
+\begin{Verbatim}[samepage=true]
+  1 #h  "help.txt"          line 62 
+  2 %a+ "usr_21.txt"        line 1 
+  3 "usr_toc.txt"           line 1 
+\end{Verbatim}
+
+The first column contains the buffer number.
+You can use this to edit the buffer without having to type the name, see below.
+
+After the buffer number come the flags.
+Then the name of the file and the line number where the cursor was the last time.
+ 
+The flags that can appear are these (from left to right):
+\begin{center} \begin{tabular}{c l}
+				\verb!u! &  Buffer is unlisted |\verb!:h unlisted-buffer!|. \\
+				\verb!  %! &  Current buffer. \\
+				\verb!  #! &  Alternate buffer. \\
+				\verb!    a! & Buffer is loaded and displayed. \\
+				\verb!    h! & Buffer is loaded but hidden. \\
+				\verb!      =! & Buffer is read-only. \\
+				\verb!      -! & Buffer is not modifiable, the 'modifiable' option is off. \\
+				\verb!        +! & Buffer has been modified. \\
+\end{tabular} \end{center}
+\subsubsection{Editing a buffer}
+You can edit a buffer by its number.
+That avoids having to type the file name:
+ 
+\begin{Verbatim}[samepage=true]
+ :buffer 2
+\end{Verbatim}
+
+But the only way to know the number is by looking in the buffer list.
+You can use the name, or part of it, instead:
+
+\begin{Verbatim}[samepage=true]
+ :buffer help
+\end{Verbatim}
+
+Vim will find the best match for the name you type.
+If there is only one buffer that matches the name, it will be used.
+In this case "\verb!help.txt!".
+
+To open a buffer in a new window:
+
+\begin{Verbatim}[samepage=true]
+ :sbuffer 3
+\end{Verbatim}
+
+This works with a name as well.
+\subsubsection{Using the buffer list}
+You can move around in the buffer list with these commands:
+
+\begin{center} \begin{tabular}{c l}
+				\verb!:bnext! & go to next buffer \\
+				\verb!:bprevious! & go to previous buffer \\
+				\verb!:bfirst! & go to the first buffer \\
+				\verb!:blast! & go to the last buffer
+\end{tabular} \end{center}
+To remove a buffer from the list, use this command:
+
+\begin{Verbatim}[samepage=true]
+ :bdelete 3
+\end{Verbatim}
+
+Again, this also works with a name.
+
+If you delete a buffer that was active (visible in a window), that window will be closed.
+If you delete the current buffer, the current window will be closed.
+If it was the last window, Vim will find another buffer to edit.
+You can't be editing nothing!
+
+\emph{Note}: Even after removing the buffer with "\verb!:bdelete!" Vim still remembers it.
+It's actually made "unlisted", it no longer appears in the list from "\verb!:buffers!".
+The "\verb5:buffers!5" command will list unlisted buffers (yes, Vim can do the impossible).
+To really make Vim forget about a buffer, use "\verb!:bwipe!".
+Also see the 'buflisted' option.
+\clearpage

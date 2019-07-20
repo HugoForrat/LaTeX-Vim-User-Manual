@@ -1,0 +1,872 @@
+\section{Making big changes}
+In chapter 4 several ways to make small changes were explained.  This chapter
+goes into making changes that are repeated or can affect a large amount of
+text.  The Visual mode allows doing various things with blocks of text.  Use
+an external program to do really complicated things.
+\localtableofcontentswithrelativedepth{+1}
+\subsection{Record and playback commands}
+The "\verb!.!" command repeats the preceding change.
+But what if you want to do something more complex than a single change?  That's where command recording comes in.
+There are three steps:
+
+\begin{enumerate}
+				\item The "\verb!q{register}!" command starts recording keystrokes into the register named {register}.
+								The register name must be between a and z.
+				\item Type your commands.
+				\item To finish recording, press q (without any extra character).
+\end{enumerate}
+
+You can now execute the macro by typing the command "\verb!@{register}!".
+
+Take a look at how to use these commands in practice.
+You have a list of filenames that look like this:
+
+\begin{Verbatim}[samepage=true]
+    stdio.h 
+    fcntl.h 
+    unistd.h 
+    stdlib.h 
+\end{Verbatim}
+
+And what you want is the following:
+
+\begin{Verbatim}[samepage=true]
+    #include "stdio.h" 
+    #include "fcntl.h" 
+    #include "unistd.h" 
+    #include "stdlib.h" 
+\end{Verbatim}
+
+You start by moving to the first character of the first line.
+Next you execute the following commands:
+
+\begin{center}\begin{longtable}{r l}
+				\verb!qa! & Start recording a macro in register a.\\
+				\verb!^! & Move to the beginning of the line.\\
+				\verb!i#include "<Esc>! & Insert the string \verb!#include "! at the beginning of the line.\\
+				\verb!$! & Move to the end of the line.\\
+				\verb:a"<Esc>: & Append the character double quotation mark (") to the end of the line.\\
+				\verb!j! & Go to the next line.\\
+				\verb!q! & Stop recording the macro.\\
+\end{longtable}\end{center}
+
+Now that you have done the work once, you can repeat the change by typing the command "\verb!@a!" three times.
+
+The "\verb!@a!" command can be preceded by a count, which will cause the macro to be executed that number of times.
+In this case you would type:
+
+\begin{Verbatim}[samepage=true]
+ 3@a
+\end{Verbatim}
+
+\subsubsection{Move and execute}
+You might have the lines you want to change in various places.
+Just move the cursor to each location and use the "\verb!@a!" command.
+If you have done that once, you can do it again with "\verb!@@!".
+That's a bit easier to type.
+If you now execute register b with "@b", the next "@@" will use register b.
+
+If you compare the playback method with using "\verb!.!", there are several differences.
+First of all, "\verb!.!" can only repeat one change.
+As seen in the example above, "\verb!@a!" can do several changes, and move around as well.
+Secondly, "\verb!.!" can only remember the last change.
+Executing a register allows you to make any changes and then still use "\verb!@a!" to replay the recorded commands.
+Finally, you can use 26 different registers.
+Thus you can remember 26 different command sequences to execute.
+
+
+\subsubsection{Using registers}
+The registers used for recording are the same ones you used for yank and delete commands.
+This allows you to mix recording with other commands to manipulate the registers.
+
+Suppose you have recorded a few commands in register \verb!n!.
+When you execute this with "\verb!@n!" you notice you did something wrong.
+You could try recording again, but perhaps you will make another mistake.
+Instead, use this trick:
+
+\begin{center}\begin{longtable}{c l}
+				\verb!G! & Go to the end of the file. \\
+				\verb!o<Esc>! & Create an empty line. \\
+				\verb!"np! & Put the text from the n register.  You now see the commands you typed as text in the file. \\
+				\verb!{edits}! & Change the commands that were wrong.  This is just like editing text. \\
+				\verb!0! & Go to the start of the line. \\
+				\verb!"ny$! & Yank the corrected commands into the n register. \\
+				\verb!dd! & Delete the scratch line. \\
+\end{longtable}\end{center}
+
+Now you can execute the corrected commands with "\verb!@n!".
+(If your recorded commands include line breaks, adjust the last two items in the example to include all the lines.)
+\subsubsection{Appending to a register}
+So far we have used a lowercase letter for the register name.
+To append to a register, use an uppercase letter.
+
+Suppose you have recorded a command to change a word to register \verb!c!.
+It works properly, but you would like to add a search for the next word to change.
+This can be done with:
+
+\begin{Verbatim}[samepage=true]
+ qC/word<Enter>q
+\end{Verbatim}
+
+You start with "\verb!qC!", which records to the \verb!c! register and appends.
+Thus writing to an uppercase register name means to append to the register with the same letter, but lowercase.
+
+This works both with recording and with yank and delete commands.
+For example, you want to collect a sequence of lines into the a register.
+Yank the first line with:
+
+\begin{Verbatim}[samepage=true]
+ "aY
+\end{Verbatim}
+
+Now move to the second line, and type:
+
+\begin{Verbatim}[samepage=true]
+ "AY
+\end{Verbatim}
+
+Repeat this command for all lines.
+The a register now contains all those lines, in the order you yanked them.
+
+\subsection{Substitution}
+\label{find-replace}
+The "\verb!:substitute!" command enables you to perform string replacements on a whole range of lines.
+The general form of this command is as follows:
+
+\begin{Verbatim}[samepage=true]
+ :[range]substitute/from/to/[flags]
+\end{Verbatim}
+
+This command changes the "from" string to the "to" string in the lines specified with [range].
+For example, you can change "Professor" to "Teacher" in all lines with the following command:
+
+\begin{Verbatim}[samepage=true]
+ :%substitute/Professor/Teacher/
+\end{Verbatim}
+ 
+\emph{Note}: The "\verb!:substitute!" command is almost never spelled out completely.
+Most of the time, people use the abbreviated version "\verb!:s!".
+From here on the abbreviation will be used.
+
+The "\verb!%!" before the command specifies the command works on all lines.
+Without a range, "\verb!:s!" only works on the current line.
+More about ranges in the next section |\hyperref[Command ranges]{\texttt{Command ranges}}|.
+
+By default, the "\verb!:substitute!" command changes only the first occurrence on each line.
+For example, the preceding command changes the line:
+
+\begin{Verbatim}[samepage=true]
+    Professor Smith criticized Professor Johnson today. 
+\end{Verbatim}
+
+to:
+
+\begin{Verbatim}[samepage=true]
+    Teacher Smith criticized Professor Johnson today. 
+\end{Verbatim}
+
+To change every occurrence on the line, you need to add the \verb!g! (global) flag.
+The command:
+
+\begin{Verbatim}[samepage=true]
+ :%s/Professor/Teacher/g
+\end{Verbatim}
+
+results in (starting with the original line):
+
+\begin{Verbatim}[samepage=true]
+    Teacher Smith criticized Teacher Johnson today. 
+\end{Verbatim}
+
+Other flags include \verb!p! (print), which causes the "\verb!:substitute!" command to print out the last line it changes.
+The \verb!c! (confirm) flag tells "\verb!:substitute!" to ask you for confirmation before it performs each substitution.
+Enter the following:
+
+\begin{Verbatim}[samepage=true]
+ :%s/Professor/Teacher/c
+\end{Verbatim}
+
+Vim finds the first occurrence of "Professor" and displays the text it is about to change.
+You get the following prompt:
+
+\begin{Verbatim}[samepage=true]
+ replace with Teacher (y/n/a/q/l/^E/^Y)?
+\end{Verbatim}
+
+At this point, you must enter one of the following answers:
+
+\begin{center}\begin{longtable}{c l}
+				y & Yes; make this change. \\
+				n & No; skip this match. \\
+				a & All; make this change and all remaining ones without further \& confirmation. \\
+				q & Quit; don't make any more changes. \\
+				l & Last; make this change and then quit. \\
+				CTRL-E & Scroll the text one line up. \\
+				CTRL-Y & Scroll the text one line down. \\
+\end{longtable}\end{center}
+
+The "from" part of the substitute command is actually a pattern.
+The same kind as used for the search command.
+For example, this command only substitutes "the" when it appears at the start of a line:
+
+\begin{Verbatim}[samepage=true]
+ :s/^the/these/
+\end{Verbatim}
+
+If you are substituting with a "from" or "to" part that includes a slash, you need to put a backslash before it.
+A simpler way is to use another character instead of the slash.
+A plus, for example:
+
+\begin{Verbatim}[samepage=true]
+ :s+one/two+one or two+
+\end{Verbatim}
+\subsection{Command ranges}
+\label{Command ranges}
+The "\verb!:substitute!" command, and many other : commands, can be applied to a selection of lines.
+This is called a range.
+
+The simple form of a range is {number},{number}.
+For example:
+
+\begin{Verbatim}[samepage=true]
+ :1,5s/this/that/g
+\end{Verbatim}
+
+Executes the substitute command on the lines 1 to 5.
+Line 5 is included.
+The range is always placed before the command.
+
+A single number can be used to address one specific line:
+
+\begin{Verbatim}[samepage=true]
+ :54s/President/Fool/
+\end{Verbatim}
+
+Some commands work on the whole file when you do not specify a range.
+To make them work on the current line the "\verb!.!" address is used.
+The "\verb!:write!" command works like that.
+Without a range, it writes the whole file.
+To make it write only the current line into a file:
+
+\begin{Verbatim}[samepage=true]
+ :.write otherfile
+\end{Verbatim}
+
+The first line always has number one.
+How about the last line?
+The "\verb!$!" character is used for this.
+For example, to substitute in the lines from the cursor to the end:
+
+\begin{Verbatim}[samepage=true]
+ :.,$s/yes/no/
+\end{Verbatim}
+
+The "\verb!%!" range that we used before, is actually a short way to say "\verb!1,$!", from the first to the last line.
+\subsubsection{Using a pattern in a range}
+Suppose you are editing a chapter in a book, and want to replace all occurrences of "grey" with "gray".
+But only in this chapter, not in the next one.
+You know that only chapter boundaries have the word "Chapter" in the first column.
+This command will work then:
+
+\begin{Verbatim}[samepage=true]
+ :?^Chapter?,/^Chapter/s=grey=gray=g
+\end{Verbatim}
+
+You can see a search pattern is used twice.
+The first "\verb!?^Chapter?!" finds the line above the current position that matches this pattern.
+Thus the \verb!?pattern?! range is used to search backwards.
+Similarly, "\verb!/^Chapter/!" is used to search forward for the start of the next chapter.
+
+To avoid confusion with the slashes, the "\verb!=!" character was used in the substitute command here.
+A slash or another character would have worked as well.
+\subsubsection{Add and subtract}
+There is a slight error in the above command: If the title of the next chapter had included "grey" it would be replaced as well.
+Maybe that's what you wanted, but what if you didn't?  Then you can specify an offset.
+
+To search for a pattern and then use the line above it:
+
+\begin{Verbatim}[samepage=true]
+ /Chapter/-1
+\end{Verbatim}
+
+You can use any number instead of the 1.
+To address the second line below the match:
+
+\begin{Verbatim}[samepage=true]
+ /Chapter/+2
+\end{Verbatim}
+
+The offsets can also be used with the other items in a range.
+Look at this one:
+
+\begin{Verbatim}[samepage=true]
+ :.+3,$-5
+\end{Verbatim}
+
+This specifies the range that starts three lines below the cursor and ends five lines before the last line in the file.
+\subsubsection{Using marks}
+Instead of figuring out the line numbers of certain positions, remembering them and typing them in a range, you can use marks.
+
+Place the marks as mentioned in chapter 3.
+For example, use "\verb!mt!" to mark the top of an area and "\verb!mb!" to mark the bottom.
+Then you can use this range to specify the lines between the marks (including the lines with the marks):
+
+\begin{Verbatim}[samepage=true]
+ :'t,'b
+\end{Verbatim}
+\subsubsection{Visual mode and ranges}
+You can select text with Visual mode.
+If you then press "\verb!:!" to start a colon command, you will see this:
+
+\begin{Verbatim}[samepage=true]
+ :'<,'>
+\end{Verbatim}
+
+Now you can type the command and it will be applied to the range of lines that was visually selected.
+
+\emph{Note}:
+When using Visual mode to select part of a line, or using CTRL-V to select a block of text, the colon commands will still apply to whole lines.
+This might change in a future version of Vim.
+
+The \verb!'<! and \verb!'>! are actually marks, placed at the start and end of the Visual selection.
+The marks remain at their position until another Visual selection is made.
+Thus you can use the "\verb!'<!" command to jump to position where the Visual area started.
+And you can mix the marks with other items:
+
+\begin{Verbatim}[samepage=true]
+ :'>,$
+\end{Verbatim}
+
+This addresses the lines from the end of the Visual area to the end of the file.
+\subsubsection{A number of lines}
+When you know how many lines you want to change, you can type the number and then ":".
+For example, when you type "5:", you will get:
+
+\begin{Verbatim}[samepage=true]
+ :.,.+4
+\end{Verbatim}
+
+Now you can type the command you want to use.
+It will use the range "\verb!.!" (current line) until "\verb!.+4!" (four lines down).
+Thus it spans five lines.
+
+\subsection{The global command}
+The "\verb!:global!" command is one of the more powerful features of Vim.
+It allows you to find a match for a pattern and execute a command there.
+The general form is:
+
+\begin{Verbatim}[samepage=true]
+ :[range]global/{pattern}/{command}
+\end{Verbatim}
+
+This is similar to the "\verb!:substitute!" command.
+But, instead of replacing the matched text with other text, the command {command} is executed.
+
+\emph{Note}:
+The command executed for "\verb!:global!" must be one that starts with a colon.
+Normal mode commands can not be used directly.
+The |\verb!:h :normal!| command can do this for you.
+
+Suppose you want to change "foobar" to "barfoo", but only in C++ style comments.
+These comments start with "\verb!//!".
+Use this command:
+
+\begin{Verbatim}[samepage=true]
+ :g+//+s/foobar/barfoo/g
+\end{Verbatim}
+
+This starts with "\verb!:g!".
+That is short for ":global", just like ":s" is short for "\verb!:substitute!".
+Then the pattern, enclosed in plus characters.
+Since the pattern we are looking for contains a slash, this uses the plus character to separate the pattern.
+Next comes the substitute command that changes "foobar" into "barfoo".
+
+The default range for the global command is the whole file.
+Thus no range was specified in this example.
+This is different from "\verb!:substitute!", which works on one line without a range.
+
+The command isn't perfect, since it also matches lines where "\verb!//!" appears halfway a line, and the substitution will also take place before the "\verb!//!".
+
+Just like with "\verb!:substitute!", any pattern can be used.
+When you learn more complicated patterns later, you can use them here.
+\subsection{Visual block mode}
+With CTRL-V you can start selection of a rectangular area of text.
+There are a few commands that do something special with the text block.
+
+There is something special about using the "\verb!$!" command in Visual block mode.
+When the last motion command used was "\verb!$!", all lines in the Visual selection will extend until the end of the line, also when the line with the cursor is shorter.
+This remains effective until you use a motion command that moves the cursor horizontally.
+Thus using "\verb!j!" keeps it, "\verb!h!" stops it.
+
+\subsubsection{Inserting text}
+The command  "\verb!I{string}<Esc>!" inserts the text {string} in each line, just left of the visual block.
+You start by pressing CTRL-V to enter visual block mode.
+Now you move the cursor to define your block.
+Next you type I to enter Insert mode, followed by the text to insert.
+As you type, the text appears on the first line only.
+
+After you press <Esc> to end the insert, the text will magically be inserted in the rest of the lines contained in the visual selection.
+Example:
+
+\begin{Verbatim}[samepage=true]
+    include one 
+    include two 
+    include three 
+    include four 
+\end{Verbatim}
+
+Move the cursor to the "o" of "one" and press CTRL-V.
+Move it down with "3j" to "four".
+You now have a block selection that spans four lines.
+Now type:
+
+\begin{Verbatim}[samepage=true]
+ Imain.<Esc>
+\end{Verbatim}
+
+The result:
+
+\begin{Verbatim}[samepage=true]
+    include main.one 
+    include main.two 
+    include main.three 
+    include main.four 
+\end{Verbatim}
+
+If the block spans short lines that do not extend into the block, the text is not inserted in that line.
+For example, make a Visual block selection that includes the word "long" in the first and last line of this text, and thus has no text selected in the second line:
+
+\begin{Verbatim}[samepage=true]
+    This is a long line 
+    short 
+    Any other long line 
+
+              ^^^^ selected block
+\end{Verbatim}
+
+Now use the command "\verb!Ivery <Esc>!".
+The result is:
+
+\begin{Verbatim}[samepage=true]
+    This is a very long line 
+    short 
+    Any other very long line 
+\end{Verbatim}
+
+In the short line no text was inserted.
+
+If the string you insert contains a newline, the "\verb!I!" acts just like a Normal insert command and affects only the first line of the block.
+
+The "\verb!A!" command works the same way, except that it appends after the right side of the block.
+And it does insert text in a short line.
+Thus you can make a choice whether you do or don't want to append text to a short line.
+
+There is one special case for "A": Select a Visual block and then use "\verb!$!" to make the block extend to the end of each line.
+Using "\verb!A!" now will append the text to the end of each line.
+
+Using the same example from above, and then typing "\verb!$A XXX<Esc>!", you get this result:
+
+\begin{Verbatim}[samepage=true]
+    This is a long line XXX 
+    short XXX 
+    Any other long line XXX 
+\end{Verbatim}
+
+This really requires using the "\verb!$!" command.
+Vim remembers that it was used.
+Making the same selection by moving the cursor to the end of the longest line with other movement commands will not have the same result.
+\subsubsection{Changing text}
+The Visual block "\verb!c!" command deletes the block and then throws you into Insert mode to enable you to type in a string.
+The string will be inserted in each line in the block.
+
+Starting with the same selection of the "long" words as above, then typing "\verb!c_LONG_<Esc>!", you get this:
+
+\begin{Verbatim}[samepage=true]
+    This is a _LONG_ line 
+    short 
+    Any other _LONG_ line 
+\end{Verbatim}
+
+Just like with "\verb!I!" the short line is not changed.
+Also, you can't enter a newline in the new text.
+
+The "\verb!C!" command deletes text from the left edge of the block to the end of line.
+It then puts you in Insert mode so that you can type in a string, which is added to the end of each line.
+
+Starting with the same text again, and typing "\verb!Cnew text<Esc>!" you get:
+
+\begin{Verbatim}[samepage=true]
+    This is a new text 
+    short 
+    Any other new text 
+\end{Verbatim}
+
+Notice that, even though only the "long" word was selected, the text after it is deleted as well.
+Thus only the location of the left edge of the visual block really matters.
+
+Again, short lines that do not reach into the block are excluded.
+
+Other commands that change the characters in the block:
+\begin{center}
+				\begin{longtable}{c l}
+								\verb:~: & swap case \& (a -> A and A -> a) \\
+								\verb:U: & make uppercase \& (a -> A and A -> A) \\
+								\verb:u: & make lowercase \& (a -> a and A -> a) \\
+				\end{longtable}
+\end{center}
+\subsubsection{Filling with a character}
+To fill the whole block with one character, use the "\verb!r!" command.
+Again, starting with the same example text from above, and then typing "\verb!rx!":
+
+\begin{Verbatim}[samepage=true]
+    This is a xxxx line 
+    short 
+    Any other xxxx line 
+\end{Verbatim}
+
+\emph{Note}:
+If you want to include characters beyond the end of the line in the block, check out the 'virtualedit' feature in chapter 25.
+
+\subsubsection{Shifting}
+The command "\verb!>!" shifts the selected text to the right one shift amount, inserting whitespace.
+The starting point for this shift is the left edge of the visual block.
+
+With the same example again, "\verb!>!" gives this result:
+
+\begin{Verbatim}[samepage=true]
+    This is a     long line 
+    short 
+    Any other     long line 
+\end{Verbatim}
+
+The shift amount is specified with the 'shiftwidth' option.
+To change it to use 4 spaces:
+
+\begin{Verbatim}[samepage=true]
+ :set shiftwidth=4
+\end{Verbatim}
+
+The "\verb!<!" command removes one shift amount of whitespace at the left edge of the block.
+This command is limited by the amount of text that is there; so if there is less than a shift amount of whitespace available, it removes what it can.
+
+
+\subsubsection{Joining lines}
+The "\verb!J!" command joins all selected lines together into one line.
+Thus it removes the line breaks.
+Actually, the line break, leading white space and trailing white space is replaced by one space.
+Two spaces are used after a line ending (that can be changed with the 'joinspaces' option).
+
+Let's use the example that we got so familiar with now.
+The result of using the "\verb!J!" command:
+
+\begin{Verbatim}[samepage=true]
+    This is a long line short Any other long line 
+\end{Verbatim}
+
+The "J" command doesn't require a blockwise selection.
+It works with "v" and "\verb!V!" selection in exactly the same way.
+
+If you don't want the white space to be changed, use the "\verb!gJ!" command.
+\subsection{Reading and writing part of a file}
+When you are writing an e-mail message, you may want to include another file.
+This can be done with the "\verb!:read {filename}!" command.
+The text of the file is put below the cursor line.
+
+Starting with this text:
+
+\begin{Verbatim}[samepage=true]
+    Hi John, 
+    Here is the diff that fixes the bug: 
+    Bye, Pierre. 
+\end{Verbatim}
+
+Move the cursor to the second line and type:
+
+\begin{Verbatim}[samepage=true]
+ :read patch
+\end{Verbatim}
+
+The file named "\verb!patch!" will be inserted, with this result:
+
+\begin{Verbatim}[samepage=true]
+    Hi John, 
+    Here is the diff that fixes the bug: 
+    2c2 
+    <    for (i = 0; i <= length; ++i) 
+    --- 
+    >    for (i = 0; i < length; ++i) 
+    Bye, Pierre. 
+\end{Verbatim}
+
+The "\verb!:read!" command accepts a range.
+The file will be put below the last line number of this range.
+Thus "\verb!:$r patch!" appends the file "\verb!patch!" at the end of the file.
+
+What if you want to read the file above the first line?  This can be done with the line number zero.
+This line doesn't really exist, you will get an error message when using it with most commands.
+But this command is allowed:
+
+\begin{Verbatim}[samepage=true]
+ :0read patch
+\end{Verbatim}
+
+The file "\verb!patch!" will be put above the first line of the file.
+\subsubsection{Writing a range of lines}
+To write a range of lines to a file, the "\verb!:write!" command can be used.
+Without a range it writes the whole file.
+With a range only the specified lines are written:
+
+\begin{Verbatim}[samepage=true]
+ :.,$write tempo
+\end{Verbatim}
+
+This writes the lines from the cursor until the end of the file into the file "\verb!tempo!".
+If this file already exists you will get an error message.
+Vim protects you from accidentally overwriting an existing file.
+If you know what you are doing and want to overwrite the file, append !:
+
+\begin{Verbatim}[samepage=true]
+ :.,$write! tempo
+\end{Verbatim}
+
+CAREFUL: The ! must follow the "\verb!:write!" command immediately, without white space.
+Otherwise it becomes a filter command, which is explained later in this chapter.
+\subsubsection{Appending to a file}
+In the first section of this chapter was explained how to collect a number of lines into a register.
+The same can be done to collect lines in a file.
+Write the first line with this command:
+
+\begin{Verbatim}[samepage=true]
+ :.write collection
+\end{Verbatim}
+
+Now move the cursor to the second line you want to collect, and type this:
+
+\begin{Verbatim}[samepage=true]
+ :.write >>collection
+\end{Verbatim}
+
+The "\verb!>>!" tells Vim the "collection" file is not to be written as a new file, but the line must be appended at the end.
+You can repeat this as many times as you like.
+\subsection{Formatting text}
+When you are typing plain text, it's nice if the length of each line is automatically trimmed to fit in the window.
+To make this happen while inserting text, set the 'textwidth' option:
+
+\begin{Verbatim}[samepage=true]
+ :set textwidth=72
+\end{Verbatim}
+
+You might remember that in the example vimrc file this command was used for every text file.
+Thus if you are using that vimrc file, you were already using it.
+To check the current value of 'textwidth':
+
+\begin{Verbatim}[samepage=true]
+ :set textwidth
+\end{Verbatim}
+
+Now lines will be broken to take only up to 72 characters.
+But when you insert text halfway a line, or when you delete a few words, the lines will get too long or too short.
+Vim doesn't automatically reformat the text.
+
+To tell Vim to format the current paragraph:
+
+\begin{Verbatim}[samepage=true]
+ gqap
+\end{Verbatim}
+
+This starts with the "\verb!gq!" command, which is an operator.
+Following is "\verb!ap!", the text object that stands for "a paragraph".
+A paragraph is separated from the next paragraph by an empty line.
+
+\emph{Note}:
+A blank line, which contains white space, does NOT separate paragraphs.
+This is hard to notice!
+
+Instead of "\verb!ap!" you could use any motion or text object.
+If your paragraphs are properly separated, you can use this command to format the whole file:
+
+\begin{Verbatim}[samepage=true]
+ gggqG
+\end{Verbatim}
+
+"\verb!gg!" takes you to the first line, "\verb!gq!" is the format operator and "\verb!G!" the motion that jumps to the last line.
+
+In case your paragraphs aren't clearly defined, you can format just the lines you manually select.
+Move the cursor to the first line you want to format.
+Start with the command "\verb!gqj!".
+This formats the current line and the one below it.
+If the first line was short, words from the next line will be appended.
+If it was too long, words will be moved to the next line.
+The cursor moves to the second line.
+Now you can use "\verb!.!" to repeat the command.
+Keep doing this until you are at the end of the text you want to format.
+
+\subsection{Changing case}
+You have text with section headers in lowercase.
+You want to make the word "section" all uppercase.
+Do this with the "\verb!gU!" operator.
+Start with the cursor in the first column:
+
+\begin{Verbatim}[samepage=true]
+                         gUw
+    section header      ---->      SECTION header
+\end{Verbatim}
+
+The "\verb!gu!" operator does exactly the opposite:
+
+\begin{Verbatim}[samepage=true]
+                         guw
+    SECTION header      ---->      section header
+\end{Verbatim}
+
+You can also use "\verb!g~!" to swap case.
+All these are operators, thus they work with any motion command, with text objects and in Visual mode.
+
+To make an operator work on lines you double it.
+The delete operator is "\verb!d!", thus to delete a line you use "\verb!dd!".
+Similarly, "\verb!gugu!" makes a whole line lowercase.
+This can be shortened to "\verb!guu!".
+"\verb!gUgU!" is shortened to "\verb!gUU!" and "\verb!g~g~!" to "\verb!g~~!".
+Example:
+
+\begin{Verbatim}[samepage=true]
+                            g~~ 
+    Some GIRLS have Fun    ---->   sOME girls HAVE fUN 
+\end{Verbatim}
+\subsection{Using an external program}
+Vim has a very powerful set of commands, it can do anything.
+But there may still be something that an external command can do better or faster.
+
+The command "\verb:!{motion}{program}:" takes a block of text and filters it through an external program.
+In other words, it runs the system command represented by {program}, giving it the block of text represented by {motion} as input.
+The output of this command then replaces the selected block.
+
+Because this summarizes badly if you are unfamiliar with UNIX filters, take a look at an example.
+The sort command sorts a file.
+If you execute the following command, the unsorted file input.txt will be sorted and written to output.txt.
+(This works on both UNIX and Microsoft Windows.)
+
+\begin{Verbatim}[samepage=true]
+ sort <input.txt >output.txt
+\end{Verbatim}
+
+Now do the same thing in Vim.
+You want to sort lines 1 through 5 of a file.
+You start by putting the cursor on line 1.
+Next you execute the following command:
+
+\begin{Verbatim}[samepage=true]
+ !5G
+\end{Verbatim}
+
+The "\verb:!:" tells Vim that you are performing a filter operation.
+The Vim editor expects a motion command to follow, indicating which part of the file to filter.
+The "\verb!5G!" command tells Vim to go to line 5, so it now knows that it is to filter lines 1 (the current line) through 5.
+
+In anticipation of the filtering, the cursor drops to the bottom of the screen and a ! prompt displays.
+You can now type in the name of the filter program, in this case "\verb!sort!".
+Therefore, your full command is as follows:
+
+\begin{Verbatim}[samepage=true]
+ !5Gsort<Enter>
+\end{Verbatim}
+
+The result is that the sort program is run on the first 5 lines.
+The output of the program replaces these lines.
+
+\begin{Verbatim}[samepage=true]
+    line 55               line 11
+    line 33               line 22
+    line 11     -->       line 33
+    line 22               line 44
+    line 44               line 55
+    last line             last line
+\end{Verbatim}
+
+The "\verb:!!:" command filters the current line through a filter.
+In Unix the "\verb!date!" command prints the current time and date.
+"\verb:!!date<Enter>:" replaces the current line with the output of "\verb!date!".
+This is useful to add a timestamp to a file.
+
+\subsubsection{When it doesn't work}
+Starting a shell, sending it text and capturing the output requires that Vim knows how the shell works exactly.
+When you have problems with filtering, check the values of these options:
+
+\begin{center}\begin{longtable}{c l}
+				'shell' & specifies the program that Vim uses to execute external programs. \\
+				'shellcmdflag' & argument to pass a command to the shell \\
+				'shellquote' & quote to be used around the command \\
+				'shellxquote' & quote to be used around the command and redirection \\
+				'shelltype' & kind of shell (only for the Amiga) \\
+				'shellslash' & use forward slashes in the command (only for MS-Windows and alikes) \\
+				'shellredir' & string used to write the command output into a file \\
+\end{longtable}\end{center}
+
+On Unix this is hardly ever a problem, because there are two kinds of shells: "sh" like and "csh" like.
+Vim checks the 'shell' option and sets related options automatically, depending on whether it sees "csh" somewhere in 'shell'.
+
+On MS-Windows, however, there are many different shells and you might have to tune the options to make filtering work.
+Check the help for the options for more information.
+\subsubsection{Reading command output}
+To read the contents of the current directory into the file, use this:
+
+on Unix:
+\begin{Verbatim}[samepage=true]
+ :read !ls
+\end{Verbatim}
+on MS-Windows:
+\begin{Verbatim}[samepage=true]
+ :read !dir
+\end{Verbatim}
+
+The output of the "\verb!ls!" or "\verb!dir!" command is captured and inserted in the text, below the cursor.
+This is similar to reading a file, except that the "\verb:!:" is used to tell Vim that a command follows.
+
+The command may have arguments.
+And a range can be used to tell where Vim should put the lines:
+
+\begin{Verbatim}[samepage=true]
+ :0read !date -u
+\end{Verbatim}
+
+This inserts the current time and date in UTC format at the top of the file.
+(Well, if you have a date command that accepts the "\verb!-u!" argument.) 
+Note the difference with using "!!date": that replaced a line, while ":read !date" will insert a line.
+\subsubsection{Writing text to a command}
+The Unix command "\verb!wc!" counts words.
+To count the words in the current file:
+
+\begin{Verbatim}[samepage=true]
+ :write !wc
+\end{Verbatim}
+
+This is the same write command as before, but instead of a file name the "\verb:!:" character is used and the name of an external command.
+The written text will be passed to the specified command as its standard input.
+The output could look like this:
+
+\begin{Verbatim}[samepage=true]
+       4      47     249 
+\end{Verbatim}
+
+The "\verb!wc!" command isn't verbose.
+This means you have 4 lines, 47 words and 249 characters.
+
+Watch out for this mistake:
+
+\begin{Verbatim}[samepage=true]
+ :write! wc
+\end{Verbatim}
+
+This will write the file "\verb!wc!" in the current directory, with force.
+White space is important here!
+
+\subsubsection{Redrawing the screen}
+If the external command produced an error message, the display may have been messed up.
+Vim is very efficient and only redraws those parts of the screen that it knows need redrawing.
+But it can't know about what another program has written.
+To tell Vim to redraw the screen:
+
+\begin{Verbatim}[samepage=true]
+ CTRL-L
+\end{Verbatim}
+\clearpage
