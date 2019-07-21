@@ -1,0 +1,679 @@
+\section{Set your settings}
+Vim can be tuned to work like you want it to.  This chapter shows you how to
+make Vim start with options set to different values.  Add plugins to extend
+Vim's capabilities.  Or define your own macros.
+\localtableofcontentswithrelativedepth{+1}
+\subsection{The vimrc file}
+\label{The vimrc file}
+\label{vimrc-intro}
+
+You probably got tired of typing commands that you use very often.
+To start Vim with all your favorite option settings and mappings, you write them in what is called the vimrc file.
+Vim executes the commands in this file when it starts up.
+
+If you already have a vimrc file (e.g., when your sysadmin has one setup for you), you can edit it this way:
+
+ \begin{Verbatim}[samepage=true]
+ :edit $MYVIMRC
+ \end{Verbatim}
+
+If you don't have a vimrc file yet, see |\verb!:h vimrc!| to find out where you can create a vimrc file.
+Also, the "\verb!:version!" command mentions the name of the "user vimrc file" Vim looks for.
+
+For Unix and Macintosh this file is always used and is recommended:
+
+\begin{Verbatim}[samepage=true]
+    ~/.vimrc 
+\end{Verbatim}
+
+For MS-DOS and MS-Windows you can use one of these:
+
+\begin{Verbatim}[samepage=true]
+    $HOME/_vimrc 
+    $VIM/_vimrc 
+\end{Verbatim}
+
+The vimrc file can contain all the commands that you type after a colon.
+The most simple ones are for setting options.
+For example, if you want Vim to always start with the 'incsearch' option on, add this line you your vimrc file:
+
+ \begin{Verbatim}[samepage=true]
+ set incsearch
+ \end{Verbatim}
+
+For this new line to take effect you need to exit Vim and start it again.
+Later you will learn how to do this without exiting Vim.
+
+This chapter only explains the most basic items.
+For more information on how to write a Vim script file: |\hyperref[Write a Vim script]{\texttt{Write a Vim script}}|.
+
+\subsection{The example vimrc file explained}
+\label{vimrc_example.vim}
+
+In the first chapter was explained how the example vimrc (included in the Vim distribution) file can be used to make Vim startup in not-compatible mode (see \hyperref[not-compatible]{|\texttt{not-compatible}|}).
+The file can be found here:
+
+\begin{Verbatim}[samepage=true]
+    $VIMRUNTIME/vimrc_example.vim 
+\end{Verbatim}
+
+In this section we will explain the various commands used in this file.
+This will give you hints about how to set up your own preferences.
+Not everything will be explained though.
+Use the ":help" command to find out more.
+
+ \begin{Verbatim}[samepage=true]
+ set nocompatible
+ \end{Verbatim}
+
+As mentioned in the first chapter, these manuals explain Vim working in an improved way, thus not completely Vi compatible.
+Setting the 'compatible' option off, thus 'nocompatible' takes care of this.
+
+ \begin{Verbatim}[samepage=true]
+ set backspace=indent,eol,start
+ \end{Verbatim}
+
+This specifies where in Insert mode the <BS> is allowed to delete the character in front of the cursor.
+The three items, separated by commas, tell Vim to delete the white space at the start of the line, a line break and the character before where Insert mode started.
+
+ \begin{Verbatim}[samepage=true]
+ set autoindent
+ \end{Verbatim}
+
+This makes Vim use the indent of the previous line for a newly created line.
+Thus there is the same amount of white space before the new line.
+For example when pressing <Enter> in Insert mode, and when using the "\verb!o!" command to open a new line.
+
+ \begin{Verbatim}[samepage=true]
+ if has("vms")
+   set nobackup
+ else
+   set backup
+ endif
+ \end{Verbatim}
+
+This tells Vim to keep a backup copy of a file when overwriting it.
+But not on the VMS system, since it keeps old versions of files already.
+The backup file will have the same name as the original file with "\textasciitilde" added.
+See |\hyperref[Backup files]{\texttt{Backup files}}|
+
+ \begin{Verbatim}[samepage=true]
+ set history=50
+ \end{Verbatim}
+
+Keep 50 commands and 50 search patterns in the history.
+Use another number if you want to remember fewer or more lines.
+
+ \begin{Verbatim}[samepage=true]
+ set ruler
+ \end{Verbatim}
+
+Always display the current cursor position in the lower right corner of the Vim window.
+
+ \begin{Verbatim}[samepage=true]
+ set showcmd
+ \end{Verbatim}
+
+Display an incomplete command in the lower right corner of the Vim window, left of the ruler.
+For example, when you type "\verb!2f!", Vim is waiting for you to type the character to find and "\verb!2f!" is displayed.
+When you press "\verb!w!" next, the "\verb!2fw!" command is executed and the displayed "2f" is removed.
+
+\begin{Verbatim}[samepage=true]
+    +-------------------------------------------------+
+    |text in the Vim window                           |
+    |~                                                |
+    |~                                                |
+    |-- VISUAL --                  2f      43,8   17% |
+    +-------------------------------------------------+
+     ^^^^^^^^^^^                  ^^^^^^^^ ^^^^^^^^^^
+      'showmode'                  'showcmd' 'ruler'
+\end{Verbatim}
+
+\begin{Verbatim}[samepage=true]
+ set incsearch
+\end{Verbatim}
+
+Display the match for a search pattern when halfway typing it.
+
+ \begin{Verbatim}[samepage=true]
+ map Q gq
+ \end{Verbatim}
+
+This defines a key mapping.
+More about that in the next section.
+This defines the "\verb!Q!" command to do formatting with the "\verb!gq!" operator.
+This is how it worked before Vim 5.0.
+Otherwise the "\verb!Q!" command starts Ex mode, but you will not need it.
+
+ \begin{Verbatim}[samepage=true]
+ vnoremap _g y:exe "grep /" . escape(@", '\\/') . "/ *.c *.h"<CR>
+ \end{Verbatim}
+
+This mapping yanks the visually selected text and searches for it in C files.
+This is a complicated mapping.
+You can see that mappings can be used to do quite complicated things.
+Still, it is just a sequence of commands that are executed like you typed them.
+
+ \begin{Verbatim}[samepage=true]
+ if &t_Co > 2 |\verb!:h !| has("gui_running")
+   syntax on
+   set hlsearch
+ endif
+ \end{Verbatim}
+
+This switches on syntax highlighting, but only if colors are available.
+And the 'hlsearch' option tells Vim to highlight matches with the last used search pattern.
+The "if" command is very useful to set options only when some condition is met.
+More about that in |\hyperref[Write a Vim script]{\texttt{Write a Vim script}}|.
+\phantomsection
+\label{vimrc-filetype}
+ \begin{Verbatim}[samepage=true]
+ filetype plugin indent on
+ \end{Verbatim}
+
+This switches on three very clever mechanisms:
+\begin{enumerate}
+				\item Filetype detection.
+								Whenever you start editing a file, Vim will try to figure out what kind of file this is.
+								When you edit "main.c", Vim will see the "\verb!.c!" extension and recognize this as a "c" filetype.
+								When you edit a file that starts with "\verb!#!/bin/sh!", Vim will recognize it as a "sh" filetype.
+								The filetype detection is used for syntax highlighting and the other two items below.
+								See |\verb!:h filetypes!|.
+
+				\item Using filetype plugin files Many different filetypes are edited with different options.
+								For example, when you edit a "c" file, it's very useful to set the 'cindent' option to automatically indent the lines.
+								These commonly useful option settings are included with Vim in filetype plugins.
+								You can also add your own, see \hyperref[write-filetype-plugin]{|\texttt{write-filetype-plugin}|}.
+
+				\item Using indent files When editing programs, the indent of a line can often be computed automatically.
+								Vim comes with these indent rules for a number of filetypes.
+								See |\verb!:h :filetype-indent-on!| and 'indentexpr'.
+\end{enumerate}
+
+ \begin{Verbatim}[samepage=true]
+ autocmd FileType text setlocal textwidth=78
+ \end{Verbatim}
+
+This makes Vim break text to avoid lines getting longer than 78 characters.
+But only for files that have been detected to be plain text.
+There are actually two parts here.
+"\verb!autocmd FileType text!" is an autocommand.
+This defines that when the file type is set to "text" the following command is automatically executed.
+"\verb!setlocal textwidth=78!" sets the 'textwidth' option to 78, but only locally in one file.
+
+\phantomsection
+\label{restore-cursor}
+
+\begin{Verbatim}[samepage=true]
+ autocmd BufReadPost *
+     \ if line("'\"") > 1 && line("'\"") <= line("$") |
+     \   exe "normal! g`\"" |
+     \ endif
+\end{Verbatim}
+
+Another autocommand.
+This time it is used after reading any file.
+The complicated stuff after it checks if the '"' mark is defined, and jumps to it if so.
+The backslash at the start of a line is used to continue the command from the previous line.
+That avoids a line getting very long.
+See |\verb!:h line-continuation!|.
+This only works in a Vim script file, not when typing commands at the command-line.
+
+\subsection{Simple mappings}
+\label{Simple mappings}
+A mapping enables you to bind a set of Vim commands to a single key.
+Suppose, for example, that you need to surround certain words with curly braces.
+In other words, you need to change a word such as "amount" into "{amount}".
+With the \verb!:map! command, you can tell Vim that the F5 key does this job.
+The command is as follows:
+
+ \begin{Verbatim}[samepage=true]
+ :map <F5> i{<Esc>ea}<Esc>
+ \end{Verbatim}
+ 
+Note: When entering this command, you must enter <F5> by typing four characters.
+Similarly, <Esc> is not entered by pressing the <Esc> key, but by typing five characters.
+Watch out for this difference when reading the manual!
+
+Let's break this down:
+\begin{longtable}{c l}
+				\verb!<F5>! & The F5 function key.
+				This is the trigger key that causes the command to be executed as the key is pressed.\\
+
+				\verb!i{<Esc>! & Insert the \{ character.
+				The <Esc> key ends Insert mode.\\
+
+				\verb!e! & Move to the end of the word.\\
+
+				\verb!a}<Esc>! & Append the \} to the word.\\
+\end{longtable}
+
+After you execute the "\verb!:map!" command, all you have to do to put \{ \} around a word is to put the cursor on the first character and press F5.
+
+In this example, the trigger is a single key; it can be any string.
+But when you use an existing Vim command, that command will no longer be available.
+You better avoid that.
+
+One key that can be used with mappings is the backslash.
+Since you probably want to define more than one mapping, add another character.
+You could map "\verb!\p!" to add parentheses around a word, and "\verb!\c!" to add curly braces, for example:
+
+ \begin{Verbatim}[samepage=true]
+ :map \p i(<Esc>ea)<Esc>
+ :map \c i{<Esc>ea}<Esc>
+ \end{Verbatim}
+
+You need to type the \verb!\! and the \verb!p! quickly after another, so that Vim knows they belong together.
+
+The "\verb!:map!" command (with no arguments) lists your current mappings.
+At least the ones for Normal mode.
+More about mappings in section |\hyperref[Key mapping]{\texttt{Key mapping}}|.
+
+\subsection{Adding a plugin}
+\label{add-plugin}
+\label{plugin}
+
+Vim's functionality can be extended by adding plugins.
+A plugin is nothing more than a Vim script file that is loaded automatically when Vim starts.
+You can add a plugin very easily by dropping it in your plugin directory.
+\{not available when Vim was compiled without the |\verb!:h +eval!| feature\}
+
+There are two types of plugins:
+\begin{description}
+				\item [global plugin:] Used for all kinds of files
+				\item [filetype plugin:] Only used for a specific type of file
+\end{description}
+
+The global plugins will be discussed first, then the filetype ones \hyperref[add-filetype-plugin]{|\texttt{add-filetype-plugin}|}.
+
+\subsubsection{Global plugins}
+\phantomsection
+\label{standard-plugin}
+
+When you start Vim, it will automatically load a number of global plugins.
+You don't have to do anything for this.
+They add functionality that most people will want to use, but which was implemented as a Vim script instead of being compiled into Vim.
+You can find them listed in the help index |\verb!:h standard-plugin-list!|.
+Also see |\verb!:h load-plugins!|.
+
+\phantomsection
+\label{add-global-plugin}
+You can add a global plugin to add functionality that will always be present
+when you use Vim.  There are only two steps for adding a global plugin:
+\begin{enumerate}
+				\item Get a copy of the plugin.
+				\item Drop it in the right directory.
+\end{enumerate}
+
+\subsubsection{Getting a global plugin}
+
+Where can you find plugins?
+\begin{itemize}
+				\item Some come with Vim.
+								You can find them in the directory \verb!$VIMRUNTIME/macros! and its sub-directories.
+				\item Download from the net. There is a large collection on \url{http://www.vim.org}.
+				\item They are sometimes posted in a Vim \hyperref[maillist]{|\texttt{maillist}|}.
+				\item You could write one yourself, see \hyperref[write-plugin]{|\texttt{write-plugin}|}.
+\end{itemize}
+
+Some plugins come as a vimball archive, see |\verb!:h vimball!|.
+Some plugins can be updated automatically, see |\verb!:h getscript!|.
+
+\subsubsection{Using a global plugin}
+
+First read the text in the plugin itself to check for any special conditions.
+Then copy the file to your plugin directory:
+
+\begin{longtable}{c l}
+		system & directory \\ \hline
+		Unix & \verb!vim/plugin/! \\
+		PC and OS/2 & \verb!$HOME/vimfiles/plugin! or \verb!$VIM/vimfiles/plugin! \\
+		Amiga & \verb!s:vimfiles/plugin! \\
+		Macintosh & \verb!$VIM:vimfiles:plugin! \\
+		Mac OS X & \verb!~/.vim/plugin/! \\
+		RISC-OS & \verb!Choices:vimfiles.plugin!
+\end{longtable}
+
+Example for Unix (assuming you didn't have a plugin directory yet):
+
+ \begin{Verbatim}[samepage=true]
+ mkdir ~/.vim
+ mkdir ~/.vim/plugin
+ cp /usr/local/share/vim/vim60/macros/justify.vim ~/.vim/plugin
+ \end{Verbatim}
+
+That's all!
+Now you can use the commands defined in this plugin to justify text.
+
+Instead of putting plugins directly into the \verb!plugin/! directory, you may better organize them by putting them into subdirectories under \verb!plugin/!.
+As an example, consider using "\verb!~/.vim/plugin/perl/*.vim!" for all your Perl plugins.
+
+\subsubsection{Filetype plugins}
+\phantomsection
+\label{add-filetype-plugin}
+\label{ftplugin}
+
+The Vim distribution comes with a set of plugins for different filetypes that you can start using with this command:
+
+ \begin{Verbatim}[samepage=true]
+ :filetype plugin on
+ \end{Verbatim}
+
+That's all!
+See \hyperref[vimrc-filetype]{|\texttt{vimrc-filetype}|}.
+
+If you are missing a plugin for a filetype you are using, or you found a better one, you can add it.
+There are two steps for adding a filetype plugin:
+
+\begin{enumerate}
+				\item Get a copy of the plugin.
+				\item Drop it in the right directory.
+\end{enumerate}
+
+\subsubsection{Getting a filetype plugin}
+
+You can find them in the same places as the global plugins.
+Watch out if the type of file is mentioned, then you know if the plugin is a global or a filetype one.
+The scripts in \verb!$VIMRUNTIME/macros! are global ones, the filetype plugins are in \verb!$VIMRUNTIME/ftplugin!.
+
+\subsubsection{Using a filetype plugin}
+\phantomsection
+\label{ftplugin-name}
+
+You can add a filetype plugin by dropping it in the right directory.
+The name of this directory is in the same directory mentioned above for global plugins, but the last part is "ftplugin".
+Suppose you have found a plugin for the "stuff" filetype, and you are on Unix.
+Then you can move this file to the ftplugin directory:
+
+ \begin{Verbatim}[samepage=true]
+ mv thefile ~/.vim/ftplugin/stuff.vim
+ \end{Verbatim}
+
+If that file already exists you already have a plugin for "stuff".
+You might want to check if the existing plugin doesn't conflict with the one you are adding.
+If it's OK, you can give the new one another name:
+
+ \begin{Verbatim}[samepage=true]
+ mv thefile ~/.vim/ftplugin/stuff_too.vim
+ \end{Verbatim}
+
+The underscore is used to separate the name of the filetype from the rest, which can be anything.
+If you use "\verb!otherstuff.vim!" it wouldn't work, it would be loaded for the "otherstuff" filetype.
+
+On MS-DOS you cannot use long filenames.
+You would run into trouble if you add a second plugin and the filetype has more than six characters.
+You can use an extra directory to get around this:
+
+ \begin{Verbatim}[samepage=true]
+ mkdir $VIM/vimfiles/ftplugin/fortran
+ copy thefile $VIM/vimfiles/ftplugin/fortran/too.vim
+ \end{Verbatim}
+
+The generic names for the filetype plugins are:
+
+ \begin{Verbatim}[samepage=true]
+ ftplugin/<filetype>.vim
+ ftplugin/<filetype>_<name>.vim
+ ftplugin/<filetype>/<name>.vim
+ \end{Verbatim}
+
+Here "<name>" can be any name that you prefer.
+Examples for the "stuff" filetype on Unix:
+
+ \begin{Verbatim}[samepage=true]
+ ~/.vim/ftplugin/stuff.vim
+ ~/.vim/ftplugin/stuff_def.vim
+ ~/.vim/ftplugin/stuff/header.vim
+ \end{Verbatim}
+
+The <filetype> part is the name of the filetype the plugin is to be used for.
+Only files of this filetype will use the settings from the plugin.
+The <name> part of the plugin file doesn't matter, you can use it to have several plugins for the same filetype.
+Note that it must end in "\verb!.vim!".
+
+Further reading:\\ %TODO à refaire
+|\verb!:h filetype-plugins!| Documentation for the filetype plugins and information about how to avoid that mappings cause problems.\\
+|\verb!:h load-plugins!|     When the global plugins are loaded during startup.\\
+|\verb!:h ftplugin-overrule!|   Overruling the settings from a global plugin.\\
+\hyperref[write-plugin]{|\texttt{write-plugin}|}       How to write a plugin script.\\
+|\verb!:h plugin-details!| For more information about using plugins or when your plugin doesn't work.\\
+|\verb!:h new-filetype!|     How to detect a new file type.
+
+\subsection{Adding a help file}
+\label{add-local-help}
+\label{matchit-install}
+
+If you are lucky, the plugin you installed also comes with a help file.
+We will explain how to install the help file, so that you can easily find help for your new plugin.
+Let us use the "matchit.vim" plugin as an example (it is included with Vim).
+This plugin makes the "\verb!%!" command jump to matching HTML tags, if/else/endif in Vim scripts, etc.
+Very useful, although it's not backwards compatible (that's why it is not enabled by default).
+This plugin comes with documentation: "\verb!matchit.txt!".
+Let's first copy the plugin to the right directory.
+This time we will do it from inside Vim, so that we can use \verb!$VIMRUNTIME!.
+(You may skip some of the "mkdir" commands if you already have the directory.)
+
+ \begin{Verbatim}[samepage=true]
+ :!mkdir ~/.vim
+ :!mkdir ~/.vim/plugin
+ :!cp $VIMRUNTIME/macros/matchit.vim ~/.vim/plugin
+ \end{Verbatim}
+
+The "\verb!cp!" command is for Unix, on MS-DOS you can use "\verb!copy!".
+
+Now create a "\verb!doc!" directory in one of the directories in '\verb!runtimepath!'.
+
+ \begin{Verbatim}[samepage=true]
+ :!mkdir ~/.vim/doc
+ \end{Verbatim}
+
+Copy the help file to the "\verb!doc!" directory.
+
+ \begin{Verbatim}[samepage=true]
+ :!cp $VIMRUNTIME/macros/matchit.txt ~/.vim/doc
+ \end{Verbatim}
+
+Now comes the trick, which allows you to jump to the subjects in the new help file: Generate the local tags file with the |\verb!:h :helptags!| command.
+
+ \begin{Verbatim}[samepage=true]
+ :helptags ~/.vim/doc
+ \end{Verbatim}
+
+Now you can use the
+
+ \begin{Verbatim}[samepage=true]
+ :help g%
+ \end{Verbatim}
+
+command to find help for "\verb!g%!" in the help file you just added.
+You can see an entry for the local help file when you do:
+
+ \begin{Verbatim}[samepage=true]
+ :help local-additions
+ \end{Verbatim}
+
+The title lines from the local help files are automagically added to this section.
+There you can see which local help files have been added and jump to them through the tag.
+ 
+For writing a local help file, see \hyperref[write-local-help]{|\texttt{write-local-help}|}.
+
+\subsection{The option window}
+If you are looking for an option that does what you want, you can search in the help files here: |\verb!:h options!|.
+Another way is by using this command:
+
+ \begin{Verbatim}[samepage=true]
+ :options
+ \end{Verbatim}
+
+This opens a new window, with a list of options with a one-line explanation.
+The options are grouped by subject.
+Move the cursor to a subject and press <Enter> to jump there.
+Press <Enter> again to jump back.
+Or use CTRL-O.
+
+You can change the value of an option.
+For example, move to the "displaying text" subject.
+Then move the cursor down to this line:
+
+\begin{Verbatim}[samepage=true]
+    set wrap    nowrap 
+\end{Verbatim}
+
+When you hit <Enter>, the line will change to:
+
+\begin{Verbatim}[samepage=true]
+    set nowrap  wrap 
+\end{Verbatim}
+
+The option has now been switched off.
+
+Just above this line is a short description of the 'wrap' option.
+Move the cursor one line up to place it in this line.
+Now hit <Enter> and you jump to the full help on the 'wrap' option.
+
+For options that take a number or string argument you can edit the value.
+Then press <Enter> to apply the new value.
+For example, move the cursor a few lines up to this line:
+ 
+\begin{Verbatim}[samepage=true]
+    set so=0 
+\end{Verbatim}
+
+Position the cursor on the zero with "\verb!$!".
+Change it into a five with "\verb!r5!".
+Then press <Enter> to apply the new value.
+When you now move the cursor around you will notice that the text starts scrolling before you reach the border.
+This is what the 'scrolloff' option does, it specifies an offset from the window border where scrolling starts.
+
+\subsection{Often used options}
+
+There are an awful lot of options.
+Most of them you will hardly ever use.
+Some of the more useful ones will be mentioned here.
+Don't forget you can find more help on these options with the "\verb!:help!" command, with single quotes before and after the option name.
+For example:
+
+ \begin{Verbatim}[samepage=true]
+ :help 'wrap'
+ \end{Verbatim}
+
+In case you have messed up an option value, you can set it back to the default by putting an ampersand (\verb!&!) after the option name.
+Example:
+
+ \begin{Verbatim}[samepage=true]
+ :set iskeyword&
+ \end{Verbatim}
+
+\subsubsection{Not wrapping lines}
+
+Vim normally wraps long lines, so that you can see all of the text.
+Sometimes it's better to let the text continue right of the window.
+Then you need to scroll the text left-right to see all of a long line.
+Switch wrapping off with this command:
+
+ \begin{Verbatim}[samepage=true]
+ :set nowrap
+ \end{Verbatim}
+
+Vim will automatically scroll the text when you move to text that is not displayed.
+To see a context of ten characters, do this:
+
+ \begin{Verbatim}[samepage=true]
+ :set sidescroll=10
+ \end{Verbatim}
+
+This doesn't change the text in the file, only the way it is displayed.
+
+\subsubsection{Wrapping movement commands}
+
+Most commands for moving around will stop moving at the start and end of a line.
+You can change that with the 'whichwrap' option.
+This sets it to the default value:
+
+ \begin{Verbatim}[samepage=true]
+ :set whichwrap=b,s
+ \end{Verbatim}
+
+This allows the <BS> key, when used in the first position of a line, to move the cursor to the end of the previous line.
+And the <Space> key moves from the end of a line to the start of the next one.
+
+To allow the cursor keys <Left> and <Right> to also wrap, use this command:
+
+ \begin{Verbatim}[samepage=true]
+ :set whichwrap=b,s,<,>
+ \end{Verbatim}
+
+This is still only for Normal mode.
+To let <Left> and <Right> do this in Insert mode as well:
+
+ \begin{Verbatim}[samepage=true]
+ :set whichwrap=b,s,<,>,[,]
+ \end{Verbatim}
+
+There are a few other flags that can be added, see 'whichwrap'.
+
+\subsubsection{Viewing tabs}
+When there are tabs in a file, you cannot see where they are.
+To make them visible:
+
+ \begin{Verbatim}[samepage=true]
+ :set list
+ \end{Verbatim}
+
+Now every tab is displayed as \verb!^I!.
+And a \verb!$! is displayed at the end of each line, so that you can spot trailing spaces that would otherwise go unnoticed.
+A disadvantage is that this looks ugly when there are many Tabs in a file.
+If you have a color terminal, or are using the GUI, Vim can show the spaces and tabs as highlighted characters.
+Use the 'listchars' option:
+
+ \begin{Verbatim}[samepage=true]
+ :set listchars=tab:>-,trail:-
+ \end{Verbatim}
+
+Now every tab will be displayed as "\verb!>---!" (with more or less "\verb!-!") and trailing white space as "-".
+Looks a lot better, doesn't it?
+
+\subsubsection{Keywords}
+The 'iskeyword' option specifies which characters can appear in a word:
+
+\begin{Verbatim}[samepage=true]
+ :set iskeyword
+      iskeyword=@,48-57,_,192-255 
+\end{Verbatim}
+
+The "\verb!@!" stands for all alphabetic letters.
+"\verb!48-57!" stands for ASCII characters 48 to 57, which are the numbers 0 to 9.
+"\verb!192-255!" are the printable latin characters.
+Sometimes you will want to include a dash in keywords, so that commands like "\verb!w!" consider "upper-case" to be one word.
+You can do it like this:
+
+\begin{Verbatim}[samepage=true]
+ :set iskeyword+=-
+ :set iskeyword
+      iskeyword=@,48-57,_,192-255,- 
+\end{Verbatim}
+
+If you look at the new value, you will see that Vim has added a comma for you.
+To remove a character use "\verb!-=!".
+For example, to remove the underscore:
+
+\begin{Verbatim}[samepage=true]
+ :set iskeyword-=_
+ :set iskeyword
+      iskeyword=@,48-57,192-255,- 
+\end{Verbatim}
+
+This time a comma is automatically deleted.
+
+\subsubsection{Room for messages}
+When Vim starts there is one line at the bottom that is used for messages.
+When a message is long, it is either truncated, thus you can only see part of it, or the text scrolls and you have to press <Enter> to continue.
+You can set the 'cmdheight' option to the number of lines used for messages.
+Example:
+
+ \begin{Verbatim}[samepage=true]
+ :set cmdheight=3
+ \end{Verbatim}
+
+This does mean there is less room to edit text, thus it's a compromise.
+\clearpage

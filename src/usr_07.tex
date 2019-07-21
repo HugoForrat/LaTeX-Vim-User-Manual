@@ -1,0 +1,539 @@
+\section{More than one file}
+No matter how many files you have, you can edit them without leaving Vim.
+Define a list of files to work on and jump from one to the other.
+Copy text from one file and put it in another one.
+\localtableofcontentswithrelativedepth{+1}
+\subsection{Edit another file}
+
+So far you had to start Vim for every file you wanted to edit.
+There is a simpler way.
+To start editing another file, use this command:
+
+ \begin{Verbatim}[samepage=true]
+ :edit foo.txt
+ \end{Verbatim}
+
+You can use any file name instead of "\verb!foo.txt!".
+Vim will close the current file and open the new one.
+If the current file has unsaved changes, however, Vim displays an error message and does not open the new file:
+
+\begin{Verbatim}[samepage=true]
+  E37: No write since last change (use ! to override) 
+\end{Verbatim}
+
+Note:
+Vim puts an error ID at the start of each error message.
+If you do not understand the message or what caused it, look in the help system for this ID.
+In this case:
+
+\begin{Verbatim}[samepage=true]
+  :help E37
+\end{Verbatim}
+
+At this point, you have a number of alternatives.
+You can write the file using this command:
+
+ \begin{Verbatim}[samepage=true]
+ :write
+ \end{Verbatim}
+
+Or you can force Vim to discard your changes and edit the new file, using the force (\verb:!:) character:
+
+ \begin{Verbatim}[samepage=true]
+ :edit! foo.txt
+ \end{Verbatim}
+
+If you want to edit another file, but not write the changes in the current file yet, you can make it hidden:
+
+ \begin{Verbatim}[samepage=true]
+ :hide edit foo.txt
+ \end{Verbatim}
+
+The text with changes is still there, but you can't see it.
+This is further explained in section |\hyperref[The buffer list]{\texttt{The buffer list}}|: The buffer list.
+
+\subsection{A list of files}
+You can start Vim to edit a sequence of files.  For example:
+
+ \begin{Verbatim}[samepage=true]
+ vim one.c two.c three.c
+ \end{Verbatim}
+
+This command starts Vim and tells it that you will be editing three files.
+Vim displays just the first file.
+After you have done your thing in this file, to edit the next file you use this command:
+
+ \begin{Verbatim}[samepage=true]
+ :next
+ \end{Verbatim}
+
+If you have unsaved changes in the current file, you will get an error message and the "\verb!:next!" will not work.
+This is the same problem as with "\verb!:edit!" mentioned in the previous section.
+To abandon the changes:
+
+ \begin{Verbatim}[samepage=true]
+ :next!
+ \end{Verbatim}
+
+But mostly you want to save the changes and move on to the next file.
+There is a special command for this:
+
+ \begin{Verbatim}[samepage=true]
+ :wnext
+ \end{Verbatim}
+
+This does the same as using two separate commands:
+
+ \begin{Verbatim}[samepage=true]
+ :write
+ :next
+ \end{Verbatim}
+
+WHERE AM I?
+
+To see which file in the argument list you are editing, look in the window title.
+It should show something like "(2 of 3)".
+This means you are editing the second file out of three files.
+
+If you want to see the list of files, use this command:
+
+ \begin{Verbatim}[samepage=true]
+ :args
+ \end{Verbatim}
+
+This is short for "arguments".
+The output might look like this:
+
+		\begin{Verbatim}[samepage=true]
+    one.c [two.c] three.c 
+						\end{Verbatim}
+
+These are the files you started Vim with.
+The one you are currently editing, "\verb!two.c!", is in square brackets.
+
+\subsubsection{Moving to other arguments}
+To go back one file:
+
+ \begin{Verbatim}[samepage=true]
+ :previous
+ \end{Verbatim}
+
+This is just like the "\verb!:next!" command, except that it moves in the other direction.
+Again, there is a shortcut command for when you want to write the file first:
+
+ \begin{Verbatim}[samepage=true]
+ :wprevious
+ \end{Verbatim}
+
+To move to the very last file in the list:
+
+ \begin{Verbatim}[samepage=true]
+ :last
+ \end{Verbatim}
+
+And to move back to the first one again:
+
+ \begin{Verbatim}[samepage=true]
+ :first
+ \end{Verbatim}
+
+There is no "\verb!:wlast!" or "\verb!:wfirst!" command though!
+
+You can use a count for "\verb!:next!" and "\verb!:previous!".
+To skip two files forward:
+
+ \begin{Verbatim}[samepage=true]
+ :2next
+ \end{Verbatim}
+
+\subsubsection{Automatic writing}
+When moving around the files and making changes, you have to remember to use "\verb!:write!".
+Otherwise you will get an error message.
+If you are sure you always want to write modified files, you can tell Vim to automatically write them:
+
+ \begin{Verbatim}[samepage=true]
+ :set autowrite
+ \end{Verbatim}
+
+When you are editing a file which you may not want to write, switch it off again:
+
+ \begin{Verbatim}[samepage=true]
+ :set noautowrite
+ \end{Verbatim}
+
+\subsubsection{Editing another list of files}
+You can redefine the list of files without the need to exit Vim and start it again.
+Use this command to edit three other files:
+
+ \begin{Verbatim}[samepage=true]
+ :args five.c six.c seven.h
+ \end{Verbatim}
+
+Or use a wildcard, like it's used in the shell:
+
+ \begin{Verbatim}[samepage=true]
+ :args *.txt
+ \end{Verbatim}
+
+Vim will take you to the first file in the list.
+Again, if the current file has changes, you can either write the file first, or use "\verb!:args!!" (with !  added) to abandon the changes.
+
+DID YOU EDIT THE LAST FILE?
+\phantomsection
+\label{arglist-quit}
+
+When you use a list of files, Vim assumes you want to edit them all.
+To protect you from exiting too early, you will get this error when you didn't edit the last file in the list yet:
+
+		\begin{Verbatim}[samepage=true]
+    E173: 46 more files to edit 
+						\end{Verbatim}
+
+If you really want to exit, just do it again.
+Then it will work (but not when you did other commands in between).
+
+\subsection{Jumping from file to file}
+To quickly jump between two files, press CTRL-\textasciicircum (on English-US keyboards the \textasciicircum is above the 6 key).
+Example:
+
+ \begin{Verbatim}[samepage=true]
+ :args one.c two.c three.c
+ \end{Verbatim}
+
+You are now in one.c.
+
+ \begin{Verbatim}[samepage=true]
+ :next
+ \end{Verbatim}
+
+Now you are in \verb!two.c!.
+Now use CTRL-\textasciicircum to go back to \verb!one.c!.
+Another CTRL-\textasciicircum and you are back in \verb!two.c!.
+Another CTRL-\textasciicircum and you are in \verb!one.c! again.
+If you now do:
+
+ \begin{Verbatim}[samepage=true]
+ :next
+ \end{Verbatim}
+
+You are in \verb!three.c!.
+Notice that the CTRL-\textasciicircum command does not change the idea of where you are in the list of files.
+Only commands like "\verb!:next!" and "\verb!:previous!" do that.
+
+The file you were previously editing is called the "alternate" file.
+When you just started Vim CTRL-\textasciicircum will not work, since there isn't a previous file.
+
+\subsubsection{Predefined marks}
+After jumping to another file, you can use two predefined marks which are very useful:
+
+ \begin{Verbatim}[samepage=true]
+ `"
+ \end{Verbatim}
+
+This takes you to the position where the cursor was when you left the file.
+Another mark that is remembered is the position where you made the last change:
+
+ \begin{Verbatim}[samepage=true]
+ `.
+ \end{Verbatim}
+
+Suppose you are editing the file "\verb!one.txt!".
+Somewhere halfway the file you use "\verb!x!" to delete a character.
+Then you go to the last line with "\verb!G!" and write the file with "\verb!:w!".
+You edit several other files, and then use "\verb!:edit one.txt!" to come back to "\verb!one.txt!".
+If you now use \verb!`"! Vim jumps to the last line of the file.
+Using \verb!`.! takes you to the position where you deleted the character.
+Even when you move around in the file \verb!`"! and \verb!`.! will take you to the remembered position.
+At least until you make another change or leave the file.
+
+\subsubsection{File marks}
+In chapter 4 was explained how you can place a mark in a file with "\verb!mx!" and jump to that position with "\verb!`x!".
+That works within one file.
+If you edit another file and place marks there, these are specific for that file.
+Thus each file has its own set of marks, they are local to the file.
+
+So far we were using marks with a lowercase letter.  There are also marks
+with an uppercase letter.  These are global, they can be used from any file.
+For example suppose that we are editing the file "\verb!foo.txt!".  Go to halfway the
+file ("\verb!50%!") and place the F mark there (F for foo):
+
+ \begin{Verbatim}[samepage=true]
+ 50%mF
+ \end{Verbatim}
+
+Now edit the file "\verb!bar.txt!" and place the B mark (B for bar) at its last line:
+
+ \begin{Verbatim}[samepage=true]
+ GmB
+ \end{Verbatim}
+
+Now you can use the "\verb!'F!" command to jump back to halfway foo.txt.
+Or edit yet another file, type "\verb!'B!" and you are at the end of \verb!bar.txt! again.
+
+The file marks are remembered until they are placed somewhere else.
+Thus you can place the mark, do hours of editing and still be able to jump back to that mark.
+
+It's often useful to think of a simple connection between the mark letter and where it is placed.
+For example, use the H mark in a header file, M in a Makefile and C in a C code file.
+
+To see where a specific mark is, give an argument to the "\verb!:marks!" command:
+
+ \begin{Verbatim}[samepage=true]
+ :marks M
+ \end{Verbatim}
+
+You can also give several arguments:
+
+ \begin{Verbatim}[samepage=true]
+ :marks MCP
+ \end{Verbatim}
+
+Don't forget that you can use CTRL-O and CTRL-I to jump to older and newer positions without placing marks there.
+
+\subsection{Backup files}
+\label{Backup files}
+Usually Vim does not produce a backup file.
+If you want to have one, all you need to do is execute the following command:
+
+ \begin{Verbatim}[samepage=true]
+ :set backup
+ \end{Verbatim}
+
+The name of the backup file is the original file with a  \textasciitilde  added to the end.
+If your file is named \verb!data.txt!, for example, the backup file name is \verb!data.txt~!.
+
+If you do not like the fact that the backup files end with \textasciitilde, you can change the extension:
+
+ \begin{Verbatim}[samepage=true]
+ :set backupext=.bak
+ \end{Verbatim}
+
+This will use \verb!data.txt.bak! instead of \verb!data.txt~!.
+
+Another option that matters here is 'backupdir'.
+It specifies where the backup file is written.
+The default, to write the backup in the same directory as the original file, will mostly be the right thing.
+
+Note: When the 'backup' option isn't set but the 'writebackup' is, Vim will still create a backup file.
+However, it is deleted as soon as writing the file was completed successfully.
+This functions as a safety against losing your original file when writing fails in some way (disk full is the most common cause; being hit by lightning might be another, although less common).
+
+\subsubsection{Keeping the original file}
+If you are editing source files, you might want to keep the file before you make any changes.
+But the backup file will be overwritten each time you write the file.
+Thus it only contains the previous version, not the first one.
+
+To make Vim keep the original file, set the 'patchmode' option.
+This specifies the extension used for the first backup of a changed file.
+Usually you would do this:
+
+ \begin{Verbatim}[samepage=true]
+ :set patchmode=.orig
+ \end{Verbatim}
+
+When you now edit the file data.txt for the first time, make changes and write the file, Vim will keep a copy of the unchanged file under the name "\verb!data.txt.orig!".
+
+If you make further changes to the file, Vim will notice that "data.txt.orig" already exists and leave it alone.
+Further backup files will then be called "data.txt~" (or whatever you specified with 'backupext').
+
+If you leave 'patchmode' empty (that is the default), the original file will not be kept.
+
+\subsection{Copy text between files}
+This explains how to copy text from one file to another.
+Let's start with a simple example.
+Edit the file that contains the text you want to copy.
+Move the cursor to the start of the text and press "\verb!v!".
+This starts Visual mode.
+Now move the cursor to the end of the text and press "\verb!y!".
+This yanks (copies) the selected text.
+
+To copy the above paragraph, you would do:
+
+ \begin{Verbatim}[samepage=true]
+ :edit thisfile
+ /This
+ vjjjj$y
+ \end{Verbatim}
+
+Now edit the file you want to put the text in.
+Move the cursor to the character where you want the text to appear after.
+Use "\verb!p!" to put the text there.
+
+ \begin{Verbatim}[samepage=true]
+ :edit otherfile
+ /There
+ p
+ \end{Verbatim}
+
+Of course you can use many other commands to yank the text.
+For example, to select whole lines start Visual mode with "\verb!V!".
+Or use CTRL-V to select a rectangular block.
+Or use "\verb!Y!" to yank a single line, "\verb!yaw!" to yank-a-word, etc.
+
+The "\verb!p!" command puts the text after the cursor.
+Use "\verb!P!" to put the text before the cursor.
+Notice that Vim remembers if you yanked a whole line or a block, and puts it back that way.
+
+\subsubsection{Using registers}
+When you want to copy several pieces of text from one file to another, having to switch between the files and writing the target file takes a lot of time.
+To avoid this, copy each piece of text to its own register.
+
+A register is a place where Vim stores text.
+Here we will use the registers named a to z (later you will find out there are others).
+Let's copy a sentence to the f register (f for First):
+
+ \begin{Verbatim}[samepage=true]
+ "fyas
+ \end{Verbatim}
+
+The "\verb!yas!" command yanks a sentence like before.
+It's the \verb!"f! that tells Vim the text should be place in the f register.
+This must come just before the yank command.
+
+Now yank three whole lines to the \verb:l: register (l for line):
+
+ \begin{Verbatim}[samepage=true]
+ "l3Y
+ \end{Verbatim}
+
+The count could be before the "l just as well.
+To yank a block of text to the b (for block) register:
+
+ \begin{Verbatim}[samepage=true]
+ CTRL-Vjjww"by
+ \end{Verbatim}
+
+Notice that the register specification \verb!"b! is just before the "\verb!y!" command.
+This is required.
+If you would have put it before the "\verb!w!" command, it would not have worked.
+
+Now you have three pieces of text in the f, l and b registers.
+Edit another file, move around and place the text where you want it:
+
+ \begin{Verbatim}[samepage=true]
+ "fp
+ \end{Verbatim}
+
+Again, the register specification \verb!"f! comes before the "\verb!p!" command.
+
+You can put the registers in any order.
+And the text stays in the register until you yank something else into it.
+Thus you can put it as many times as you like.
+
+When you delete text, you can also specify a register.
+Use this to move several pieces of text around.
+For example, to delete-a-word and write it in the w register:
+
+ \begin{Verbatim}[samepage=true]
+ "wdaw
+ \end{Verbatim}
+
+Again, the register specification comes before the delete command "\verb!d!".
+
+\subsubsection{Appending to a file}
+When collecting lines of text into one file, you can use this command:
+
+ \begin{Verbatim}[samepage=true]
+ :write >> logfile
+ \end{Verbatim}
+
+This will write the text of the current file to the end of "logfile".
+Thus it is appended.
+This avoids that you have to copy the lines, edit the log file and put them there.
+Thus you save two steps.
+But you can only append to the end of a file.
+
+To append only a few lines, select them in Visual mode before typing "\verb!:write!".
+In chapter 10 you will learn other ways to select a range of lines.
+
+\subsection{Viewing a file}
+Sometimes you only want to see what a file contains, without the intention to ever write it back.
+There is the risk that you type "\verb!:w!" without thinking and overwrite the original file anyway.
+To avoid this, edit the file read-only.
+
+To start Vim in readonly mode, use this command:
+
+ \begin{Verbatim}[samepage=true]
+ vim -R file
+ \end{Verbatim}
+
+On Unix this command should do the same thing:
+
+ \begin{Verbatim}[samepage=true]
+ view file
+ \end{Verbatim}
+
+You are now editing "file" in read-only mode.
+When you try using "\verb!:w!" you will get an error message and the file won't be written.
+
+When you try to make a change to the file Vim will give you a warning:
+
+\begin{Verbatim}[samepage=true]
+    W10: Warning: Changing a readonly file 
+\end{Verbatim}
+
+The change will be done though.
+This allows for formatting the file, for example, to be able to read it easily.
+
+If you make changes to a file and forgot that it was read-only, you can still write it.
+Add the ! to the write command to force writing.
+
+If you really want to forbid making changes in a file, do this:
+
+ \begin{Verbatim}[samepage=true]
+ vim -M file
+ \end{Verbatim}
+
+Now every attempt to change the text will fail.
+The help files are like this, for example.
+If you try to make a change you get this error message:
+
+\begin{Verbatim}[samepage=true]
+    E21: Cannot make changes, 'modifiable' is off 
+\end{Verbatim}
+
+You could use the -M argument to setup Vim to work in a viewer mode.
+This is only voluntary though, since these commands will remove the protection:
+
+ \begin{Verbatim}[samepage=true]
+ :set modifiable
+ :set write
+ \end{Verbatim}
+
+\subsection{Changing the file name}
+A clever way to start editing a new file is by using an existing file that contains most of what you need.
+For example, you start writing a new program to move a file.
+You know that you already have a program that copies a file, thus you start with:
+
+ \begin{Verbatim}[samepage=true]
+ :edit copy.c
+ \end{Verbatim}
+
+You can delete the stuff you don't need.
+Now you need to save the file under a new name.
+The "\verb!:saveas!" command can be used for this:
+
+ \begin{Verbatim}[samepage=true]
+ :saveas move.c
+ \end{Verbatim}
+
+Vim will write the file under the given name, and edit that file.
+Thus the next time you do "\verb!:write!", it will write "\verb!move.c!".
+"\verb!copy.c!" remains unmodified.
+
+When you want to change the name of the file you are editing, but don't want to write the file, you can use this command:
+
+ \begin{Verbatim}[samepage=true]
+ :file move.c
+ \end{Verbatim}
+
+Vim will mark the file as "not edited".
+This means that Vim knows this is not the file you started editing.
+When you try to write the file, you might get this message:
+
+\begin{Verbatim}[samepage=true]
+    E13: File exists (use ! to override) 
+\end{Verbatim}
+
+This protects you from accidentally overwriting another file.
+\clearpage

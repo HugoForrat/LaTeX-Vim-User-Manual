@@ -1,0 +1,103 @@
+\documentclass[]{article}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+	\usepackage[T1]{fontenc}
+	\usepackage[utf8]{inputenc}
+\else % if luatex or xelatex
+	\ifxetex
+		\usepackage{mathspec}
+	\else
+		\usepackage{fontspec}
+	\fi
+	\defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
+\fi
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+% use microtype if available
+\IfFileExists{microtype.sty}{%
+				\usepackage[]{microtype}
+\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\PassOptionsToPackage{hyphens}{url} % url is loaded by hyperref
+\usepackage[unicode=true]{hyperref}
+\hypersetup{
+				pdftitle={Vim documentation: usr\_01},
+						pdfborder={0 0 0},
+						breaklinks=true}
+		\urlstyle{same}  % don't use monospace font for urls
+\IfFileExists{parskip.sty}{%
+				\usepackage{parskip}
+}{% else
+				\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\providecommand{\tightlist}{%
+\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+				\setcounter{secnumdepth}{0}
+				% Redefines (sub)paragraphs to behave more like sections
+\ifx\paragraph\undefined\else
+\let\oldparagraph\paragraph
+\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+\let\oldsubparagraph\subparagraph
+\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+
+\usepackage{longtable}
+\usepackage{fullpage}
+\usepackage{etoc}
+\usepackage{slashbox}
+\usepackage{fancyvrb}
+\usepackage{tabularx}
+
+\title{Vim User Manual}
+\author{Bram Moolenaar}
+\date{}
+
+
+\begin{document}
+\maketitle
+\etocsettocdepth{section}
+\tableofcontents
+\label{usr_toc}
+\clearpage
+
+\input{intro.tex}
+\input{usr_01.tex}
+\input{usr_02.tex}
+\input{usr_03.tex}
+\input{usr_04.tex}
+\input{usr_05.tex}
+\input{usr_06.tex}
+\input{usr_07.tex}
+\input{usr_08.tex}
+\input{usr_09.tex}
+\input{usr_10.tex}
+\input{usr_11.tex}
+\input{usr_12.tex}
+\input{usr_20.tex}
+\input{usr_21.tex}
+\input{usr_22.tex}
+\input{usr_23.tex}
+\input{usr_24.tex}
+\input{usr_25.tex}
+\input{usr_26.tex}
+\input{usr_27.tex}
+\input{usr_28.tex}
+\input{usr_29.tex}
+\input{usr_30.tex}
+\input{usr_31.tex}
+\input{usr_32.tex}
+\input{usr_40.tex}
+\input{usr_41.tex}
+\input{usr_42.tex}
+\input{usr_43.tex}
+\input{usr_44.tex}
+\input{usr_45.tex}
+\input{usr_90.tex}
+\end{document}

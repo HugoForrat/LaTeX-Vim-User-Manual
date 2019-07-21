@@ -1,0 +1,608 @@
+\section{Search commands and patterns}
+\label{Search commands and patterns}
+In chapter 3 a few simple search patterns were mentioned |\hyperref[Simple search patterns]{\texttt{Simple search patterns}}|.
+Vim can do much more complex searches.
+This chapter explains the most often used ones.
+A detailed specification can be found here: |\verb!:h pattern!|
+\localtableofcontentswithrelativedepth{+1}
+\subsection{Ignoring case}
+By default, Vim's searches are case sensitive.
+Therefore, "include", "INCLUDE", and "Include" are three different words and a search will match only one of them.
+
+Now switch on the 'ignorecase' option:
+
+\begin{Verbatim}[samepage=true]
+ :set ignorecase
+\end{Verbatim}
+
+Search for "include" again, and now it will match "Include", "INCLUDE" and "InClUDe".
+(Set the 'hlsearch' option to quickly see where a pattern matches.)
+
+You can switch this off again with:
+
+\begin{Verbatim}[samepage=true]
+ :set noignorecase
+\end{Verbatim}
+
+But let's keep it set, and search for "INCLUDE".
+It will match exactly the same text as "include" did.
+Now set the 'smartcase' option:
+
+\begin{Verbatim}[samepage=true]
+ :set ignorecase smartcase
+\end{Verbatim}
+
+If you have a pattern with at least one uppercase character, the search becomes case sensitive.
+The idea is that you didn't have to type that uppercase character, so you must have done it because you wanted case to match.
+That's smart!
+
+With these two options set you find the following matches:
+
+\begin{center} \begin{tabular}{c c}
+				pattern & matches \\
+				word & word, Word, WORD, WoRd, etc.\\
+				Word & Word\\
+				WORD & WORD\\
+				WoRd & WoRd\\
+\end{tabular} \end{center}
+
+\subsubsection{Case in one pattern}
+If you want to ignore case for one specific pattern, you can do this by prepending the "\verb!\c!" string.
+Using "\verb!\C!" will make the pattern to match case.
+This overrules the 'ignorecase' and 'smartcase' options, when "\verb!\c!" or "\verb!\C!" is used their value doesn't matter.
+
+\begin{center} \begin{tabular}{c c}
+				pattern & matches \\
+				\verb!\Cword! & word\\
+				\verb!\CWord! & Word\\
+				\verb!\cword! & word, Word, WORD, WoRd, etc.\\
+				\verb!\cWord! & word, Word, WORD, WoRd, etc.\\
+\end{tabular} \end{center}
+
+A big advantage of using "\verb!\c!" and "\verb!\C!" is that it sticks with the pattern.
+Thus if you repeat a pattern from the search history, the same will happen, no matter if 'ignorecase' or 'smartcase' was changed.
+
+\emph{Note}: The use of "\verb!\!" items in search patterns depends on the 'magic' option.
+In this chapter we will assume 'magic' is on, because that is the standard and recommended setting.
+If you would change 'magic', many search patterns would suddenly become invalid.
+
+\emph{Note}: If your search takes much longer than you expected, you can interrupt it with CTRL-C on Unix and  CTRL-Break on MS-DOS and MS-Windows.
+\subsection{Wrapping around the file end}
+By default, a forward search starts searching for the given string at the current cursor location.
+It then proceeds to the end of the file.
+If it has not found the string by that time, it starts from the beginning and searches from the start of the file to the cursor location.
+
+Keep in mind that when repeating the "\verb!n!" command to search for the next match, you eventually get back to the first match.
+If you don't notice this you keep searching forever!  To give you a hint, Vim displays this message:
+
+\begin{Verbatim}[samepage=true]
+    search hit BOTTOM, continuing at TOP 
+\end{Verbatim}
+
+If you use the "\verb!?!" command, to search in the other direction, you get this message:
+
+\begin{Verbatim}[samepage=true]
+    search hit TOP, continuing at BOTTOM 
+\end{Verbatim}
+
+Still, you don't know when you are back at the first match.
+One way to see this is by switching on the 'ruler' option:
+
+\begin{Verbatim}[samepage=true]
+ :set ruler
+\end{Verbatim}
+
+Vim will display the cursor position in the lower righthand corner of the window (in the status line if there is one).
+It looks like this:
+
+\begin{Verbatim}[samepage=true]
+    101,29       84% 
+\end{Verbatim}
+
+The first number is the line number of the cursor.
+Remember the line number where you started, so that you can check if you passed this position again.
+\subsubsection{Not wrapping}
+To turn off search wrapping, use the following command:
+
+\begin{Verbatim}[samepage=true]
+ :set nowrapscan
+\end{Verbatim}
+
+Now when the search hits the end of the file, an error message displays:
+
+\begin{Verbatim}[samepage=true]
+    E385: search hit BOTTOM without match for: forever 
+\end{Verbatim}
+
+Thus you can find all matches by going to the start of the file with "\verb!gg!" and keep searching until you see this message.
+
+If you search in the other direction, using "\verb!?!", you get:
+
+\begin{Verbatim}[samepage=true]
+    E384: search hit TOP without match for: forever 
+\end{Verbatim}
+\subsection{Offsets}
+By default, the search command leaves the cursor positioned on the beginning of the pattern.
+You can tell Vim to leave it some other place by specifying an offset.
+For the forward search command "\verb!/!", the offset is specified by appending a slash (\verb!/!) and the offset:
+
+\begin{Verbatim}[samepage=true]
+ /default/2
+\end{Verbatim}
+
+This command searches for the pattern "default" and then moves to the beginning of the second line past the pattern.
+Using this command on the paragraph above, Vim finds the word "default" in the first line.
+Then the cursor is moved two lines down and lands on "an offset".
+
+If the offset is a simple number, the cursor will be placed at the beginning of the line that many lines from the match.
+The offset number can be positive or negative.
+If it is positive, the cursor moves down that many lines; if negative, it moves up.
+
+\subsubsection{Character offsets}
+The "\verb!e!" offset indicates an offset from the end of the match.
+It moves the cursor onto the last character of the match.
+The command:
+
+\begin{Verbatim}[samepage=true]
+ /const/e
+\end{Verbatim}
+
+puts the cursor on the "\verb!t!" of "\verb!const!".
+
+From that position, adding a number moves forward that many characters.
+This command moves to the character just after the match:
+
+\begin{Verbatim}[samepage=true]
+ /const/e+1
+\end{Verbatim}
+
+A positive number moves the cursor to the right, a negative number moves it to the left.
+For example:
+
+\begin{Verbatim}[samepage=true]
+ /const/e-1
+\end{Verbatim}
+
+moves the cursor to the "\verb!s!" of "\verb!const!".
+
+If the offset begins with "\verb!b!", the cursor moves to the beginning of the pattern.
+That's not very useful, since leaving out the "\verb!b!" does the same thing.
+It does get useful when a number is added or subtracted.
+The cursor then goes forward or backward that many characters.
+For example:
+
+\begin{Verbatim}[samepage=true]
+ /const/b+2
+\end{Verbatim}
+
+Moves the cursor to the beginning of the match and then two characters to the right.
+Thus it lands on the "\verb!n!".
+
+\subsubsection{Repeating}
+To repeat searching for the previously used search pattern, but with a different offset, leave out the pattern:
+
+\begin{Verbatim}[samepage=true]
+ /that
+ //e
+\end{Verbatim}
+
+Is equal to:
+
+\begin{Verbatim}[samepage=true]
+ /that/e
+\end{Verbatim}
+
+To repeat with the same offset:
+
+\begin{Verbatim}[samepage=true]
+ /
+\end{Verbatim}
+
+"\verb!n!" does the same thing.
+To repeat while removing a previously used offset:
+
+\begin{Verbatim}[samepage=true]
+ //
+\end{Verbatim}
+
+\subsubsection{Searching backwards}
+The "\verb!?!" command uses offsets in the same way, but you must use "\verb!?!" to separate the offset from the pattern, instead of "\verb!/!":
+
+\begin{Verbatim}[samepage=true]
+ ?const?e-2
+\end{Verbatim}
+
+The "\verb!b!" and "\verb!e!" keep their meaning, they don't change direction with the use of "\verb!?!".
+\subsubsection{Start position}
+When starting a search, it normally starts at the cursor position.
+When you specify a line offset, this can cause trouble.
+For example:
+
+\begin{Verbatim}[samepage=true]
+ /const/-2
+\end{Verbatim}
+
+This finds the next word "\verb!const!" and then moves two lines up.
+If you use "\verb!n!" to search again, Vim could start at the current position and find the same "\verb!const!" match.
+Then using the offset again, you would be back where you started.
+You would be stuck!
+
+It could be worse: Suppose there is another match with "\verb!const!" in the next line.
+Then repeating the forward search would find this match and move two lines up.
+Thus you would actually move the cursor back!
+
+When you specify a character offset, Vim will compensate for this.
+Thus the search starts a few characters forward or backward, so that the same match isn't found again.
+\subsection{Matching multiple times}
+The "\verb!*!" item specifies that the item before it can match any number of times.
+Thus:
+
+\begin{Verbatim}[samepage=true]
+ /a*
+\end{Verbatim}
+
+matches "a", "aa", "aaa", etc.
+But also "" (the empty string), because zero times is included.
+
+The "\verb!*!" only applies to the item directly before it.
+Thus "\verb!ab*!" matches "a", "ab", "abb", "abbb", etc.
+To match a whole string multiple times, it must be grouped into one item.
+This is done by putting "\verb!\(!" before it and "\verb!\)!" after it.
+Thus this command:
+
+\begin{Verbatim}[samepage=true]
+ /\(ab\)*
+\end{Verbatim}
+
+Matches: "ab", "abab", "ababab", etc.  And also "".
+
+To avoid matching the empty string, use "\verb!\+!".
+This makes the previous item match one or more times.
+
+\begin{Verbatim}[samepage=true]
+ /ab\+
+\end{Verbatim}
+
+Matches "ab", "abb", "abbb", etc.
+It does not match "a" when no "b" follows.
+
+To match an optional item, use "\verb!\=!".
+Example:
+
+\begin{Verbatim}[samepage=true]
+ /folders\=
+\end{Verbatim}
+
+Matches "folder" and "folders".
+\subsubsection{Specific counts}
+To match a specific number of items use the form "\verb!\{n,m}!".
+"\verb!n!" and "\verb!m!" are numbers.
+The item before it will be matched "\verb!n!" to "\verb!m!" times |\verb!:h inclusive!|.
+Example:
+
+\begin{Verbatim}[samepage=true]
+ /ab\{3,5}
+\end{Verbatim}
+
+matches "abbb", "abbbb" and "abbbbb".
+
+When "\verb!n!" is omitted, it defaults to zero.
+When "\verb!m!" is omitted it defaults to infinity.
+When "\verb!,m!" is omitted, it matches exactly "\verb!n!" times.
+Examples:
+
+\begin{center} \begin{tabular}{c l}
+				pattern & match count \\
+				\verb!\{,4}! & 0, 1, 2, 3 or 4 \\
+				\verb!\{3,}! & 3, 4, 5, etc. \\
+				\verb!\{0,1}! & 0 or 1, same as \verb!\=! \\
+				\verb!\{0,}! & 0 or more, same as \verb!*! \\
+				\verb!\{1,}! & 1 or more, same as \verb!\+! \\
+				\verb!\{3}! & 3 \\
+\end{tabular} \end{center}
+\subsubsection{Matching as little as possible}
+The items so far match as many characters as they can find.
+To match as few as possible, use "\verb!\{-n,m}!".
+It works the same as "\verb!\{n,m}!", except that the minimal amount possible is used.
+
+For example, use:
+
+\begin{Verbatim}[samepage=true]
+ /ab\{-1,3}
+\end{Verbatim}
+
+Will match "ab" in "abbb".
+Actually, it will never match more than one b, because there is no reason to match more.
+It requires something else to force it to match more than the lower limit.
+
+The same rules apply to removing "\verb!n!" and "\verb!m!".
+It's even possible to remove both of the numbers, resulting in "\verb!\{-}!".
+This matches the item before it zero or more times, as few as possible.
+The item by itself always matches zero times.
+It is useful when combined with something else.
+Example:
+
+\begin{Verbatim}[samepage=true]
+ /a.\{-}b
+\end{Verbatim}
+
+This matches "axb" in "axbxb".
+If this pattern would be used:
+
+\begin{Verbatim}[samepage=true]
+ /a.*b
+\end{Verbatim}
+
+It would try to match as many characters as possible with "\verb!.*!", thus it matches "axbxb" as a whole.
+\subsection{Alternatives}
+The "or" operator in a pattern is "\verb!\|!".
+Example:
+
+\begin{Verbatim}[samepage=true]
+ /foo\|bar
+\end{Verbatim}
+
+This matches "foo" or "bar".
+More alternatives can be concatenated:
+
+\begin{Verbatim}[samepage=true]
+ /one\|\verb!:h two\!|three
+\end{Verbatim}
+
+Matches "one", "two" and "three".
+
+To match multiple times, the whole thing must be placed in "\verb!\(!" and "\verb!\)!":
+
+\begin{Verbatim}[samepage=true]
+ /\(foo\|bar\)\+
+\end{Verbatim}
+
+This matches "foo", "foobar", "foofoo", "barfoobar", etc.
+
+Another example:
+
+\begin{Verbatim}[samepage=true]
+ /end\(if\|\verb!:h while\!|for\)
+\end{Verbatim}
+
+This matches "endif", "endwhile" and "endfor".
+
+A related item is "\verb!\&!".
+This requires that both alternatives match in the same place.
+The resulting match uses the last alternative.
+Example:
+
+\begin{Verbatim}[samepage=true]
+ /forever\&...
+\end{Verbatim}
+
+This matches "for" in "forever".  It will not match "fortuin", for example.
+\subsection{Character ranges}
+To match "a", "b" or "c" you could use "\verb!/a\|\verb!:h b\!|c!".
+When you want to match all letters from "a" to "z" this gets very long.
+There is a shorter method:
+
+\begin{Verbatim}[samepage=true]
+ /[a-z]
+\end{Verbatim}
+
+The \verb![]! construct matches a single character.
+Inside you specify which characters to match.
+You can include a list of characters, like this:
+
+\begin{Verbatim}[samepage=true]
+ /[0123456789abcdef]
+\end{Verbatim}
+
+This will match any of the characters included.
+For consecutive characters you can specify the range.
+"\verb!0-3!" stands for "\verb!0123!".
+"\verb!w-z!" stands for "\verb!wxyz!".
+Thus the same command as above can be shortened to:
+
+\begin{Verbatim}[samepage=true]
+ /[0-9a-f]
+\end{Verbatim}
+
+To match the "\verb!-!" character itself make it the first or last one in the range.
+These special characters are accepted to make it easier to use them inside a \verb![]! range (they can actually be used anywhere in the search pattern):
+
+\begin{center} \begin{tabular}{c l}
+				\verb!\e! & <Esc> \\
+				\verb!\t! & <Tab> \\
+				\verb!\r! & <CR>  \\
+				\verb!\b! & <BS>  \\
+\end{tabular} \end{center}
+
+There are a few more special cases for \verb![]! ranges, see |\verb!:h /[]!| for the whole story.
+\subsubsection{Complemented range}
+To avoid matching a specific character, use "\verb!^!" at the start of the range.
+The [] item then matches everything but the characters included.
+Example:
+
+\begin{Verbatim}[samepage=true]
+ /"[^"]*"
+\end{Verbatim}
+
+\begin{center} \begin{tabular}{c c}
+				\verb!/"      ! & a double quote \\
+				\verb!/ [^"]  ! & any character that is not a double quote \\
+				\verb!/     * ! & as many as possible \\
+				\verb!/      "! & a double quote again \\
+\end{tabular} \end{center}
+
+This matches "foo" and "3!x", including the double quotes.
+\subsubsection{Predefined ranges}
+A number of ranges are used very often.
+Vim provides a shortcut for these.
+For example:
+
+\begin{Verbatim}[samepage=true]
+ /\a
+\end{Verbatim}
+
+Finds alphabetic characters.
+This is equal to using "\verb!/[a-zA-Z]!".
+Here are a few more of these:
+
+\begin{center} \begin{tabular}{c c c}
+				item & matches & equivalent \\
+				\verb!\d! & digit & \verb![0-9]!\\
+				\verb!\D! & non-digit & \verb![^0-9]!\\
+				\verb!\x! & hex digit & \verb![0-9a-fA-F]!\\
+				\verb!\X! & non-hex digit & \verb![^0-9a-fA-F]!\\
+				\verb!\s! & white space & \verb![   ]! (<Tab> and <Space>)\\
+				\verb!\S! & non-white characters & \verb![^  ]! (not <Tab> and <Space>)\\
+				\verb!\l! & lowercase alpha & \verb![a-z]!\\
+				\verb!\L! & non-lowercase alpha & \verb![^a-z]!\\
+				\verb!\u! & uppercase alpha & \verb![A-Z]!\\
+				\verb!\U! & non-uppercase alpha & \verb![^A-Z]!\\
+\end{tabular} \end{center}
+
+\emph{Note}:
+Using these predefined ranges works a lot faster than the character range it stands for.
+These items can not be used inside \verb![]!.
+Thus "\verb![\d\l]!" does NOT work to match a digit or lowercase alpha.
+Use "\verb!\(\d\|\l\)!" instead.
+
+See |/\textbackslash s| for the whole list of these ranges.
+\subsection{Character classes}
+The character range matches a fixed set of characters.
+A character class is similar, but with an essential difference: The set of characters can be redefined without changing the search pattern.
+
+For example, search for this pattern:
+
+\begin{Verbatim}[samepage=true]
+ /\f\+
+\end{Verbatim}
+
+The "\verb!\f!" items stands for file name characters.
+Thus this matches a sequence of characters that can be a file name.
+
+Which characters can be part of a file name depends on the system you are using.
+On MS-Windows, the backslash is included, on Unix it is not.
+This is specified with the 'isfname' option.
+The default value for Unix is:
+
+\begin{Verbatim}[samepage=true]
+ :set isfname
+ isfname=@,48-57,/,.,-,_,+,,,#,$,%,~,=
+\end{Verbatim}
+
+For other systems the default value is different.
+Thus you can make a search pattern with "\verb!\f!" to match a file name, and it will automatically adjust to the system you are using it on.
+
+\emph{Note}: Actually, Unix allows using just about any character in a file name, including white space.
+Including these characters in 'isfname' would be theoretically correct.
+But it would make it impossible to find the end of a file name in text.
+Thus the default value of 'isfname' is a compromise.
+
+The character classes are:
+
+\begin{center} \begin{tabular}{c c c}
+				item & matches & option \\
+				\verb!\i! & identifier characters & 'isident' \\
+				\verb!\I! & like \verb!\i!, excluding digits & \\
+				\verb!\k! & keyword characters & 'iskeyword' \\
+				\verb!\K! & like \verb!\k!, excluding digits & \\
+				\verb!\p! & printable characters & 'isprint' \\
+				\verb!\P! & like \verb!\p!, excluding digits & \\
+				\verb!\f! & file name characters & 'isfname' \\
+				\verb!\F! & like \verb!\f!, excluding digits & \\
+\end{tabular} \end{center}
+\subsection{Matching a line break}
+Vim can find a pattern that includes a line break.
+You need to specify where the line break happens, because all items mentioned so far don't match a line break.
+
+To check for a line break in a specific place, use the "\verb!\n!" item:
+
+\begin{Verbatim}[samepage=true]
+ /the\nword
+\end{Verbatim}
+
+This will match at a line that ends in "the" and the next line starts with "word".
+To match "the word" as well, you need to match a space or a line break.
+The item to use for it is "\verb!\_s!":
+
+\begin{Verbatim}[samepage=true]
+ /the\_sword
+\end{Verbatim}
+
+To allow any amount of white space:
+
+\begin{Verbatim}[samepage=true]
+ /the\_s\+word
+\end{Verbatim}
+
+This also matches when "the  " is at the end of a line and "\verb!   word!" at the start of the next one.
+
+"\verb!\s!" matches white space, "\verb!\_s!" matches white space or a line break.
+Similarly, "\verb!\a!" matches an alphabetic character, and "\verb!\_a!" matches an alphabetic character or a line break.
+The other character classes and ranges can be modified in the same way by inserting a "\verb!_!".
+
+Many other items can be made to match a line break by prepending "\verb!\_!".
+For example: "\verb!\_.!" matches any character or a line break.
+
+\emph{Note}: "\verb!\_.*!" matches everything until the end of the file.
+Be careful with this, it can make a search command very slow.
+
+Another example is "\verb!\_[]!", a character range that includes a line break:
+
+\begin{Verbatim}[samepage=true]
+ /"\_[^"]*"
+\end{Verbatim}
+
+This finds a text in double quotes that may be split up in several lines.
+\subsection{Examples}
+Here are a few search patterns you might find useful.
+This shows how the items mentioned above can be combined.
+
+\subsubsection{Finding a california license plate}
+A sample license plate number is "1MGU103".
+It has one digit, three uppercase letters and three digits.
+Directly putting this into a search pattern:
+
+\begin{Verbatim}[samepage=true]
+ /\d\u\u\u\d\d\d
+\end{Verbatim}
+
+Another way is to specify that there are three digits and letters with a count:
+
+\begin{Verbatim}[samepage=true]
+ /\d\u\{3}\d\{3}
+\end{Verbatim}
+
+Using \verb![]! ranges instead:
+
+\begin{Verbatim}[samepage=true]
+ /[0-9][A-Z]\{3}[0-9]\{3}
+\end{Verbatim}
+
+Which one of these you should use?  Whichever one you can remember.
+The simple way you can remember is much faster than the fancy way that you can't.
+If you can remember them all, then avoid the last one, because it's both more typing and slower to execute.
+
+\subsubsection{Finding an identifier}
+In C programs (and many other computer languages) an identifier starts with a letter and further consists of letters and digits.
+Underscores can be used too.
+This can be found with:
+
+\begin{Verbatim}[samepage=true]
+ /\<\h\w*\>
+\end{Verbatim}
+
+"\verb!\<!" and "\verb!\>!" are used to find only whole words.
+"\verb!\h!" stands for "\verb![A-Za-z_]!" and "\verb!\w!" for "\verb![0-9A-Za-z_]!".
+
+\emph{Note}:
+"\verb!\<!" and "\verb!\>!" depend on the 'iskeyword' option.
+If it includes "\verb!-!", for example, then "ident-" is not matched.
+In this situation use:
+
+\begin{Verbatim}[samepage=true]
+     /\w\@<!\h\w*\w\@!
+\end{Verbatim}
+ 
+This checks if "\verb!\w!" does not match before or after the identifier.
+See |/\@<!| and |\verb!:h /\@!!|.
+\clearpage
