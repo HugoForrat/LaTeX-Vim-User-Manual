@@ -21,7 +21,7 @@ There are probably some mistakes and inconsistencies, feel free to report them m
 - Each file end with a `\clearpage`.
 - Numbered parts of a file are `\subsection`.
 - Unnumbered parts of a file are `\subsubsection`.
-- In a coherent manner with the previous choices, the table of contents found at the beginning of each file is replaced by `\localtableofcontentswithrelativedepth{+1}`.
+- In a coherent manner with the previous choices, the table of contents found at the beginning of each section is replaced by `\localtableofcontentswithrelativedepth{+1}`.
 - Markers delimited in `*` are `\label`.
 - In said markers, in a `\` is found it is replaced by the text `backslash` because the `\` isn't authorized inside of `\label`.
 - Generally, there's only one sentence by line.
@@ -32,7 +32,7 @@ There are probably some mistakes and inconsistencies, feel free to report them m
 - In the original Vim manual, link are presented inbetween `|` symbol. Those links can lead to another part of this manual or to the Vim reference manual. It would have been difficult to link the pdf output to the Vim reference manual so I've decided to prefix those links with `:h`. Typing this command inside of Vim should lead to the correct part of the reference manual.
 - Some links to the User Manual were represented by the number corresponding to the subsection they were linked to. They're represented here by the title of the subsection instead.
 - One subsection in `usr_01` about 'Jumping around' has been deleted because it didn't make sense in the context of this pdf document.
-- A few typos have been corrected (like missing punctuation or `'` insted of `"`.
+- A few typos have been corrected (like missing punctuation or `'` insted of `"`).
 
 ## To-do
 - Most if not all ASCII art figures could be replaced with Tikz pictures.
