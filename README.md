@@ -1,5 +1,5 @@
 # LaTeX-Vim-User-Manual
-A reformating of the Vim user manual using LaTeX.
+A reformatting of the Vim user manual using LaTeX.
 This is mainly for people who'd like to read the Vim manual cover to cover.
 This was done by downloading the html version of the user manual, as they were the 12 July 2019, and converting these html files to tex files with `pandoc`.
 Some additional reformating was then done by myself.
