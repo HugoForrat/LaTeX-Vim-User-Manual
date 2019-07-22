@@ -6,6 +6,11 @@ Some additional reformating was then done by myself.
 The compilation was done using `pdflatex`.
 There are probably some mistakes and inconsistencies, feel free to report them me or to make a pull request.
 
+**You can find a pdf version of the document [here](https://github.com/HugoForrat/LaTeX-Vim-User-Manual/releases/tag/v.1.0).**
+
+You can compile the document yourself by running `pdflatex doc.tex`.
+You might have to run this command twice to have all the tables of content working.
+
 ## Used packages
 - hyperref
 - longtable
@@ -42,4 +47,4 @@ There are probably some mistakes and inconsistencies, feel free to report them m
 - Frankly, the indentation of the source files is all over the place.
 
 ## Licence
-This reformating is distributed under the term of the _Open Publication License_, just as the Vim User Manual itself.
+This reformatting is distributed under the term of the _Open Publication License_, just as the Vim User Manual itself.
