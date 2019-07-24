@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 import re
+import os
 
 # Creating the list of files to read
 tex_files = [
         'doc.tex',
         'intro.tex',
-        'texput.log',
         'usr_01.tex',
         'usr_02.tex',
         'usr_03.tex',
@@ -41,12 +41,16 @@ tex_files = [
         ]
 
 # Regex creation
+# Reference line :
 # The notation used in these manuals is explained here: \hyperref[notation]{|\texttt{notation}|}.
 # Group 1 = Before label
 # Group 2 = Name of the label
 # Group 3 = Text for the label
 # Group = Post label
 regex = re.compile(r"^(.*)\\hyperref\[(\S*)\]\{(.*)\}(.*)$")
+
+if not os.path.exists("manual_pagenumber"):
+    os.makedirs("manual_pagenumber")
 
 # Main loop
 for filename in tex_files:
