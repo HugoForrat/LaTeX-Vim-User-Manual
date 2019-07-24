@@ -43,18 +43,18 @@ It's a lot faster to use record and playback.
 Let's assume you have a directory with C++ files, all ending in "\verb!.cpp!".
 There is a function called "GetResp" that you want to rename to "GetAnswer".
 
-\begin{center} \begin{longtable}{r l}
-				\verb!vim *.cpp! & Start Vim, defining the argument list to contain all the C++ files.
+\begin{center} \begin{tabularx}{\textwidth}{r X}
+				\texttt{vim *.cpp} & Start Vim, defining the argument list to contain all the C++ files.
 				You are now in the first file. \\
-				\verb!qq! & Start recording into the q register \\
-				\verb!:%s/\<GetResp\>/GetAnswer/g! & Do the replacements in the first file. \\
-				\verb!:wnext! & Write this file and move to the next one. \\
-				\verb!q! & Stop recording. \\
-				\verb!@q! & Execute the q register.
-				This will replay the substitution and "\verb!:wnext!".
+				\texttt{qq} & Start recording into the q register \\
+				\texttt{:\%s/\textbackslash <GetResp\textbackslash >/GetAnswer/g} & Do the replacements in the first file. \\
+				\texttt{:wnext} & Write this file and move to the next one. \\
+				\texttt{q} & Stop recording. \\
+				\texttt{@q} & Execute the q register.
+				This will replay the substitution and "\texttt{:wnext}".
 				You can verify that this doesn't produce an error message. \\
-				\verb!999@q! & Execute the q register on the remaining files.  \\
-\end{longtable} \end{center}
+				\texttt{999@q} & Execute the q register on the remaining files.  \\
+\end{tabularx} \end{center}
 
 At the last file you will get an error message, because "\verb!:wnext!" cannot move to the next file.
 This stops the execution, and everything is done.

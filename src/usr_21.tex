@@ -273,10 +273,11 @@ The 'S' stands for session (actually, you can source any Vim script with \verb!-
 The windows that were open are restored, with the same position and size as before.
 Mappings and option values are like before.
 
-What exactly is restored depends on the 'sessionoptions' option.
-The default value is "blank,buffers,curdir,folds,help,options,winsize".
+What exactly is restored depends on the `sessionoptions' option.
 
-\begin{center} \begin{longtable}{c l}
+The default value is `blank,buffers,curdir,folds,help,options,winsize'.
+
+\begin{center} \begin{tabular}{c l}
 				blank & keep empty windows \\
 				buffers & all buffers, not only the ones in a window \\
 				curdir & the current directory \\
@@ -284,7 +285,7 @@ The default value is "blank,buffers,curdir,folds,help,options,winsize".
 				help & the help window \\
 				options & all options and mappings \\
 				winsize & window sizes \\
-\end{longtable} \end{center}
+\end{tabular} \end{center}
 Change this to your liking.
 To also restore the size of the Vim window, for example, use:
 
