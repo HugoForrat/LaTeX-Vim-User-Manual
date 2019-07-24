@@ -8,6 +8,8 @@ There are probably some mistakes and inconsistencies, feel free to report them m
 
 **You can find a pdf version of the document [here](https://github.com/HugoForrat/LaTeX-Vim-User-Manual/releases/tag/v.1.0).**
 
+I've also added a Python script that you can run to generate a version with page numbers instead of hyperlinks.
+
 You can compile the document yourself by running `pdflatex doc.tex`.
 You might have to run this command twice to have all the tables of content working.
 
@@ -43,6 +45,7 @@ You might have to run this command twice to have all the tables of content worki
 
 ## To-do
 - Most if not all ASCII art figures could be replaced with Tikz pictures.
+- There are plenty of over/underfull boxes when compiling.
 - The pieces of codes are not all indented the same way, maybe this could be corrected.
 - Frankly, the indentation of the source files is all over the place.
 
