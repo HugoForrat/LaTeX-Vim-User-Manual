@@ -236,17 +236,19 @@ Similarly, <Esc> is not entered by pressing the <Esc> key, but by typing five ch
 Watch out for this difference when reading the manual!
 
 Let's break this down:
-\begin{longtable}{c l}
-				\verb!<F5>! & The F5 function key.
+\begin{center}
+\begin{tabularx}{\textwidth}{c X}
+				\texttt{<F5>} & The F5 function key.
 				This is the trigger key that causes the command to be executed as the key is pressed.\\
 
-				\verb!i{<Esc>! & Insert the \{ character.
+				\texttt{i\{<Esc>} & Insert the \{ character.
 				The <Esc> key ends Insert mode.\\
 
-				\verb!e! & Move to the end of the word.\\
+				\texttt{e} & Move to the end of the word.\\
 
-				\verb!a}<Esc>! & Append the \} to the word.\\
-\end{longtable}
+				\texttt{a\}<Esc>} & Append the \} to the word.\\
+\end{tabularx}
+\end{center}
 
 After you execute the "\verb!:map!" command, all you have to do to put \{ \} around a word is to put the cursor on the first character and press F5.
 

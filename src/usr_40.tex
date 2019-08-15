@@ -389,11 +389,11 @@ Some commands take a range as their argument.
 To tell Vim that you are defining such a command, you need to specify a -range option.
 The values for this option are as follows:
 
-\begin{center} \begin{tabular}{c l}
+\begin{center} \begin{tabularx}{\textwidth}{c X}
 				\verb;-range; & Range is allowed; default is the current line. \\
 				\verb;-range=%; & Range is allowed; default is the whole file. \\
 				\verb;-range={count}; & Range is allowed; the last number in it is used as a single number whose default is {count}. \\
-\end{tabular} \end{center}
+\end{tabularx} \end{center}
 
 When a range is specified, the keywords <line1> and <line2> get the values of the first and last line in the range.
 For example, the following command defines the SaveIt command, which writes out the specified range to the file "\verb!save_file!":
