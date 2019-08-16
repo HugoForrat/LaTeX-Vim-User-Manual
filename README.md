@@ -17,7 +17,7 @@ You might have to run this command twice to have all the tables of content worki
 - hyperref
 - longtable
 - etoc
-- shlashbox
+- diagbox
 - fancyvrb
 - tabularx
 
