@@ -19,10 +19,10 @@ This command splits the screen into two windows and leaves the cursor in the top
     |/* file one.c */                  |
     |~                                 |
     |~                                 |
-    |\verb!:h one.c=============================!|
+    |one.c=============================|
     |/* file one.c */                  |
     |~                                 |
-    |\verb!:h one.c=============================!|
+    |one.c=============================|
     |                                  |
     +----------------------------------+
 \end{Verbatim}
@@ -75,10 +75,10 @@ If you were editing \verb!one.c!, then the result looks like this:
     |/* file two.c */                  |
     |~                                 |
     |~                                 |
-    |\verb!:h two.c=============================!|
+    |two.c=============================|
     |/* file one.c */                  |
     |~                                 |
-    |\verb!:h one.c=============================!|
+    |one.c=============================|
     |                                  |
     +----------------------------------+
 \end{Verbatim}
@@ -160,11 +160,11 @@ The result looks something like this:
 
 \begin{Verbatim}[samepage=true]
     +--------------------------------------+
-    |/* file two.c */   |/* file one.c */  |||\verb!:h !|
-    |~                  |~                 |||\verb!:h !|
-    |~                  |~                 |||\verb!:h !|
-    |~                  |~                 |||\verb!:h !|
-    |\verb!:h two.c===============one.c=============!|
+    |/* file two.c */   |/* file one.c */  ||||
+    |~                  |~                 ||||
+    |~                  |~                 ||||
+    |~                  |~                 ||||
+    |two.c===============one.c=============|
     |                                      |
     +--------------------------------------+
 \end{Verbatim}
@@ -213,14 +213,14 @@ For example, you have three windows like this:
     |/* file two.c */                  |
     |~                                 |
     |~                                 |
-    |\verb!:h two.c=============================!|
+    |two.c=============================|
     |/* file three.c */                |
     |~                                 |
     |~                                 |
-    |\verb!:h three.c===========================!|
+    |three.c===========================|
     |/* file one.c */                  |
     |~                                 |
-    |\verb!:h one.c=============================!|
+    |one.c=============================|
     |                                  |
     +----------------------------------+
 \end{Verbatim}
@@ -247,7 +247,7 @@ If this is your layout:
     |~            |~              |~            |
     |~            |~              |~            |
     |~            |~              |~            |
-    |\verb!:h two.c=========three.c=========one.c========!|
+    |two.c=========three.c=========one.c========|
     |                                           |
     +-------------------------------------------+
 						\end{Verbatim}
@@ -259,10 +259,10 @@ Then using CTRL-W K in the middle window (three.c) will result in:
     |/* three.c */                              |
     |~                                          |
     |~                                          |
-    |\verb!:h three.c====================================!|
-    |/* two.c */           |/* one.c */         |||\verb!:h !|
-    |~                     |~                   |||\verb!:h !|
-    |\verb!:h two.c==================one.c===============!|
+    |three.c====================================|
+    |/* two.c */           |/* one.c */         ||||
+    |~                     |~                   ||||
+    |two.c==================one.c===============|
     |                                           |
     +-------------------------------------------+
 \end{Verbatim}
@@ -326,13 +326,13 @@ This results in:
     +-------------------------------+
     |file one.txt                   |
     |~                              |
-    |\verb!:h one.txt========================!|
+    |one.txt========================|
     |file two.txt                   |
     |~                              |
-    |\verb!:h two.txt========================!|
+    |two.txt========================|
     |file three.txt                 |
     |~                              |
-    |\verb!:h three.txt======================!|
+    |three.txt======================|
     |                               |
     +-------------------------------+
 \end{Verbatim}
@@ -360,7 +360,7 @@ You will only see the line in which you added characters, and a few lines above 
 \begin{Verbatim}[samepage=true]
      VV           VV
     +-----------------------------------------+
-    |+ +--123 lines: /* a|+ +--123 lines: /* a|  <- fold||\verb!:h !|
+    |+ +--123 lines: /* a|+ +--123 lines: /* a|  <- fold|||
     |  text              |  text              |
     |  text              |  text              |
     |  text              |  text              |
@@ -370,10 +370,10 @@ You will only see the line in which you added characters, and a few lines above 
     |  text              |  text              |
     |  text              |  text              |
     |  text              |  text              |
-    |+ +--432 lines: text|+ +--432 lines: text|  <- fold||\verb!:h !|
+    |+ +--432 lines: text|+ +--432 lines: text|  <- fold|||
     |  ~                 | ~                  |
     |  ~                 | ~                  |
-    |\verb!:h main.c~==============main.c==============!|
+    |main.c~==============main.c==============|
     |                                         |
     +-----------------------------------------+
 \end{Verbatim}

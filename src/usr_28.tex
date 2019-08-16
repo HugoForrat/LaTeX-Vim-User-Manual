@@ -36,9 +36,9 @@ Try it out: Position the cursor in a paragraph and type:
 
 You will see that the paragraph is replaced by a highlighted line.
 You have created a fold.
-\verb!|zf|! is an operator and \verb!|\verb!:h ap!|! a text object selection.
-You can use the \verb!|\verb!:h zf!|! operator with any movement command to create a fold for the text that it moved over.
-\verb!|\verb!:h zf!|! also works in Visual mode.
+\verb!|zf|! is an operator and \verb!|ap|! a text object selection.
+You can use the \verb!|zf|! operator with any movement command to create a fold for the text that it moved over.
+\verb!|zf|! also works in Visual mode.
 
 To view the text again, open the fold by typing:
 
@@ -99,9 +99,9 @@ And you can close all folds with:
 
 This folds M-ore and M-ore.
 
-You can quickly disable the folding with the \verb!|\verb!:h zn!|! command.
-Then \verb!|\verb!:h zN!|! brings back the folding as it was.
-\verb!|\verb!:h zi!|! toggles between the two.
+You can quickly disable the folding with the \verb!|zn|! command.
+Then \verb!|zN|! brings back the folding as it was.
+\verb!|zi|! toggles between the two.
 This is a useful way of working:
 
 \begin{itemize}
@@ -144,10 +144,10 @@ A "\verb!-!" is shown at the start of each open fold and "\verb!|!" at following
 You can use the mouse to open a fold by clicking on the "\verb!+!" in the foldcolumn.
 Clicking on the "\verb!-!" or a "\verb!|!" below it will close an open fold.
 
-To open all folds at the cursor line use \verb!|\verb!:h zO!|!.
-To close all folds at the cursor line use \verb!|\verb!:h zC!|!.
-To delete a fold at the cursor line use \verb!|\verb!:h zd!|!.
-To delete all folds at the cursor line use \verb!|\verb!:h zD!|!.
+To open all folds at the cursor line use \verb!|zO|!.
+To close all folds at the cursor line use \verb!|zC|!.
+To delete a fold at the cursor line use \verb!|zd|!.
+To delete all folds at the cursor line use \verb!|zD|!.
 
 When in Insert mode, the fold at the cursor line is never closed.
 That allows you to see what you type!
@@ -210,7 +210,7 @@ Note that when you insert or delete lines the views might become invalid.
 Also check out the 'viewdir' option, which specifies where the views are stored.
 You might want to delete old views now and then.
 \subsection{Folding by indent}
-Defining folds with \verb!|\verb!:h zf!|! is a lot of work.
+Defining folds with \verb!|zf|! is a lot of work.
 If your text is structured by giving lower level items a larger indent, you can use the indent folding method.
 This will create folds for every sequence of lines with the same indent.
 Lines with a larger indent will become nested folds.
@@ -222,7 +222,7 @@ Try this by setting the 'foldmethod' option:
  :set foldmethod=indent
 \end{Verbatim}
 
-Then you can use the \verb!|zm|! and \verb!|\verb!:h zr!|! commands to fold more and reduce folding.
+Then you can use the \verb!|zm|! and \verb!|zr! commands to fold more and reduce folding.
 It's easy to see on this example text:
 
 \begin{Verbatim}[samepage=true]
@@ -258,12 +258,12 @@ Thus there are two ways to open and close the folds:
 \item By setting the fold level.
 This gives a very quick way of "zooming out" to view the structure of the text, move the cursor, and "zoom in" on the text again.
 
-\item By using \verb!|zo|! and \verb!|\verb!:h zc!|! commands to open or close specific folds.
+\item By using \verb!|zo|! and \verb!|zc|! commands to open or close specific folds.
 This allows opening only those folds that you want to be open, while other folds remain closed.
 \end{enumerate}
 
-This can be combined: You can first close most folds by using \verb!|zm|! a few times and then open a specific fold with \verb!|\verb!:h zo!|!.
-Or open all folds with \verb!|zR|! and then close specific folds with \verb!|\verb!:h zc!|!.
+This can be combined: You can first close most folds by using \verb!|zm|! a few times and then open a specific fold with \verb!|zo|!.
+Or open all folds with \verb!|zR|! and then close specific folds with \verb!|zc|!.
 
 But you cannot manually define folds when 'foldmethod' is "indent", as that would conflict with the relation between the indent and the fold level.
 

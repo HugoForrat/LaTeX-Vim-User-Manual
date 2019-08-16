@@ -155,7 +155,7 @@ You can see that mappings can be used to do quite complicated things.
 Still, it is just a sequence of commands that are executed like you typed them.
 
  \begin{Verbatim}[samepage=true]
- if &t_Co > 2 |\verb!:h !| has("gui_running")
+ if &t_Co > 2 || has("gui_running")
    syntax on
    set hlsearch
  endif

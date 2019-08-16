@@ -346,7 +346,7 @@ This matches "foo" or "bar".
 More alternatives can be concatenated:
 
 \begin{Verbatim}[samepage=true]
- /one\|\verb!:h two\!|three
+ /one\|two\|three
 \end{Verbatim}
 
 Matches "one", "two" and "three".
@@ -362,7 +362,7 @@ This matches "foo", "foobar", "foofoo", "barfoobar", etc.
 Another example:
 
 \begin{Verbatim}[samepage=true]
- /end\(if\|\verb!:h while\!|for\)
+ /end\(if\|while\|for\)
 \end{Verbatim}
 
 This matches "endif", "endwhile" and "endfor".
@@ -376,9 +376,10 @@ Example:
  /forever\&...
 \end{Verbatim}
 
-This matches "for" in "forever".  It will not match "fortuin", for example.
+This matches "for" in "forever".
+It will not match "fortuin", for example.
 \subsection{Character ranges}
-To match "a", "b" or "c" you could use "\verb!/a\|\verb!:h b\!|c!".
+To match "a", "b" or "c" you could use "\verb!/a\|b\|c!".
 When you want to match all letters from "a" to "z" this gets very long.
 There is a shorter method:
 

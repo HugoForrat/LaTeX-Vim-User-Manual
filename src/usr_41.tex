@@ -192,7 +192,7 @@ The next time the script executes, it can still use the old value.
 Example:
 
 \begin{Verbatim}[samepage=true]
- :if !exists("\verb!s:call_count!")
+ :if !exists("s:call_count")
  :  let s:call_count = 0
  :endif
  :let s:call_count = s:call_count + 1
@@ -1751,7 +1751,7 @@ For the "\verb!:map!", "\verb!:abbreviate!" and "\verb!:execute!" commands there
 
 With the '\verb!|!' character the command is separated from the next one.
 And that next command is only a comment.
-For the last command you need to do two things: |\verb!:h \verb!:execute!!| and use '\verb!|!':
+For the last command you need to do two things: |\verb!:execute!| and use '\verb!|!':
 
 \begin{Verbatim}[samepage=true]
  :exe '!ls *.c'          |" list C files
@@ -1776,7 +1776,7 @@ For Unix there is one special way to comment a line, that allows making a Vim sc
 \end{Verbatim}
 
 The "\verb!#!" command by itself lists a line with the line number.
-Adding an exclamation mark changes it into doing nothing, so that you can add the shell command to execute the rest of the file. |:\verb0#!0| |\verb!:h \verb!-S!!|
+Adding an exclamation mark changes it into doing nothing, so that you can add the shell command to execute the rest of the file. |:\verb0#!0| |\verb!-S!|
 
 \subsubsection{Pitfalls}
 Even bigger problem arises in the following example:
@@ -2232,7 +2232,7 @@ You can add more tags inside \verb!**! in your help file.
 But be careful not to use existing help tags.
 You would probably use the name of your plugin in most of them, like "\verb!typecorr-settings!" in the example.
 
-Using references to other parts of the help in \verb!|\verb!:h !|! is recommended.
+Using references to other parts of the help in \verb!||! is recommended.
 This makes it easy for the user to find associated help.
 \subsubsection{Filetype detection}
 \label{plugin-filetype}
