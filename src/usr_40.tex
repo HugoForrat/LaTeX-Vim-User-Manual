@@ -390,9 +390,9 @@ To tell Vim that you are defining such a command, you need to specify a -range o
 The values for this option are as follows:
 
 \begin{center} \begin{tabularx}{\textwidth}{c X}
-				\verb;-range; & Range is allowed; default is the current line. \\
-				\verb;-range=%; & Range is allowed; default is the whole file. \\
-				\verb;-range={count}; & Range is allowed; the last number in it is used as a single number whose default is {count}. \\
+				\texttt{-range;} & Range is allowed; default is the current line. \\
+				\texttt{-range=\%;} & Range is allowed; default is the whole file. \\
+				\texttt{-range={count};} & Range is allowed; the last number in it is used as a single number whose default is {count}. \\
 \end{tabularx} \end{center}
 
 When a range is specified, the keywords <line1> and <line2> get the values of the first and last line in the range.
@@ -404,18 +404,18 @@ For example, the following command defines the SaveIt command, which writes out 
 \subsubsection{Other options}
 Some of the other options and keywords are as follows:
 
-\begin{center} \begin{tabular}{c l}
-				\verb;-count={number}; & The command can take a count whose default is {number}.
+\begin{center} \begin{tabularx}{\textwidth}{c X}
+				\texttt{-count=\{number\}} & The command can take a count whose default is \{number\}.
 				The resulting count can be used through the <count> keyword. \\
-				\verb;-bang; & You can use a \verb:!:.
-				If present, using <bang> will result in a \verb:!:. \\
-				\verb;-register; & You can specify a register.
+				\texttt{-bang} & You can use a \texttt{!}.
+				If present, using <bang> will result in a \texttt{!}. \\
+				\texttt{-register} & You can specify a register.
 				(The default is the unnamed register.)
 				The register specification is available as <reg> (a.k.a. <register>). \\
-				\verb;-complete={type}; & Type of command-line completion used.  See |\verb!:h :command-completion!| for the list of possible values. \\
-				\verb;-bar; & The command can be followed by \verb!|! and another command, or \verb!"! and a comment. \\
-				\verb;-buffer; & The command is only available for the current buffer. \\
-\end{tabular} \end{center}
+				\texttt{-complete=\{type\}} & Type of command-line completion used.  See |\texttt{:h :command-completion}| for the list of possible values. \\
+				\texttt{-bar} & The command can be followed by \texttt{|} and another command, or \texttt{"} and a comment. \\
+				\texttt{-buffer} & The command is only available for the current buffer. \\
+\end{tabularx} \end{center}
 
 Finally, you have the <lt> keyword.
 It stands for the character \verb!<!.

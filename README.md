@@ -45,6 +45,8 @@ You might have to run this command twice to have all the tables of content worki
 
 ## To-do
 - Most if not all ASCII art figures could be replaced with Tikz pictures.
+- Furthermore some ASCII figures are apparently wrong.
+- The quotes are not proper LaTeX.
 - There are plenty of over/underfull boxes when compiling.
 - The pieces of codes are not all indented the same way, maybe this could be corrected.
 - Frankly, the indentation of the source files is all over the place.

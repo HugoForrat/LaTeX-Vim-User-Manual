@@ -2254,15 +2254,15 @@ Also see |\verb!:h new-filetype!|.
 \label{plugin-special}
 
 Summary of special things to use in a plugin:
-\begin{center} \begin{tabular}{c l}
-				\verb!s:name! & Variables local to the script. \\
-				\verb!<SID>! & Script-ID, used for mappings and functions local to the script. \\
-				\verb!hasmapto()! & Function to test if the user already defined a mapping for functionality the script offers. \\
-				\verb!<Leader>! & Value of "\verb!mapleader!", which the user defines as the keys that plugin mappings start with. \\
-				\verb!:map <unique>! & Give a warning if a mapping already exists. \\
-				\verb!:noremap <script>! & Use only mappings local to the script, not global mappings. \\
-				\verb!exists(":Cmd")! & Check if a user command already exists. \\
-\end{tabular} \end{center}
+\begin{center} \begin{tabularx}{\textwidth}{c l}
+				\texttt{s:name} & Variables local to the script. \\
+				\texttt{<SID>} & Script-ID, used for mappings and functions local to the script. \\
+				\texttt{hasmapto()} & Function to test if the user already defined a mapping for functionality the script offers. \\
+				\texttt{<Leader>} & Value of "\texttt{mapleader}", which the user defines as the keys that plugin mappings start with. \\
+				\texttt{:map <unique>} & Give a warning if a mapping already exists. \\
+				\texttt{:noremap <script>} & Use only mappings local to the script, not global mappings. \\
+				\texttt{exists(":Cmd")} & Check if a user command already exists. \\
+\end{tabularx} \end{center}
 \subsection{Writing a filetype plugin}
 \label{write-filetype-plugin}
 \label{ftplugin}
