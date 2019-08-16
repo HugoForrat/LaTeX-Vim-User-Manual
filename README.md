@@ -6,7 +6,7 @@ Some additional reformating was then done by myself.
 The compilation was done using `pdflatex`.
 There are probably some mistakes and inconsistencies, feel free to report them me or to make a pull request.
 
-**You can find a pdf version of the document [here](https://github.com/HugoForrat/LaTeX-Vim-User-Manual/releases/tag/v.1.0).**
+**You can find a pdf version of the document [here](https://github.com/HugoForrat/LaTeX-Vim-User-Manual/releases/tag/1.1).**
 
 I've also added a Python script that you can run to generate a version with page numbers instead of hyperlinks.
 
@@ -45,7 +45,6 @@ You might have to run this command twice to have all the tables of content worki
 
 ## To-do
 - Most if not all ASCII art figures could be replaced with Tikz pictures.
-- Furthermore some ASCII figures are apparently wrong.
 - The quotes are not proper LaTeX.
 - There are plenty of over/underfull boxes when compiling.
 - The pieces of codes are not all indented the same way, maybe this could be corrected.
