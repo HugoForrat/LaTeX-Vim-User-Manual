@@ -40,31 +40,34 @@ The first change to make is to append " too".
 And then move to the first 'o' and change it into 'w'.
 We then have two changes, numbered 1 and 2, and three states of the text:
 
-\begin{Verbatim}[samepage=true]
-        one 
-         |
-      change 1
-         |
-      one too 
-         |
-      change 2
-         |
-      one two 
-\end{Verbatim}
+\begin{center}
+	\begin{tikzpicture}[scale=0.65]
+		\node[] {one}
+		child{node[]{change 1}
+		child{node[]{one too}
+		child{node[]{change 2}
+		child{node[]{one two}
+			} } } };
+	\end{tikzpicture}
+\end{center}
 
 If we now undo one change, back to "one too", and change "one" to "me" we create a branch in the undo tree:
 
-\begin{Verbatim}[samepage=true]
-            one 
-             |
-          change 1
-             |
-          one too 
-          /     \
-     change 2  change 3
-        |        |
-     one two    me too 
-\end{Verbatim}
+\begin{center}
+	\begin{tikzpicture}
+		\node[minimum size=2cm] {one}
+		child{node[minimum size=2cm]{change 1}
+			child{node[minimum size=2cm]{one too}
+				child{node[minimum size=2cm]{change 2}
+					child{node[minimum size=2cm]{one two}}
+				}
+				child{node[minimum size=2cm]{change 3}
+					child{node[minimum size=2cm]{me too}}
+				}
+			}
+		};
+	\end{tikzpicture}
+\end{center}
 
 You can now use the |\verb!:h u!| command to undo.
 If you do this twice you get to "one".
@@ -91,21 +94,23 @@ You can use the |\verb!:h :undo!| command to jump to below any change in the tre
 
 Now make another change: change "one" to "not":
 
-\begin{Verbatim}[samepage=true]
-            one 
-             |
-          change 1
-             |
-          one too 
-          /     \
-     change 2  change 3
-        |        |
-     one two    me too 
-        |
-     change 4
-        |
-     not two 
-\end{Verbatim}
+\begin{center}
+\begin{tikzpicture}
+	\node[minimum size=2cm]{one}
+	child{node[minimum size=2cm]{change1}
+		child{node[minimum size=2cm]{one too}
+			child{node[minimum size=2cm]{one two}
+				child{node[minimum size=2cm]{change 4}
+					child{node[minimum size=2cm]{not two}}
+				}
+			}
+			child{node[minimum size=2cm]{change 3}
+				child{node[minimum size=2cm]{me too}}
+			}
+		}
+	};
+\end{tikzpicture}
+\end{center}
 
 Now you change your mind and want to go back to "me too".
 Use the |\verb!:h g-!| command.
@@ -115,20 +120,20 @@ Thus it doesn't walk the tree upwards or downwards, but goes to the change made 
 You can repeat |\verb!:h g-!| and you will see the text change:
 
 \begin{Verbatim}[samepage=true]
-    me too 
-    one two 
-    one too 
-    one 
+		me too 
+		one two 
+		one too 
+		one 
 \end{Verbatim}
 
 Use |\verb!:h g+!| to move forward in time:
 
 \begin{Verbatim}[samepage=true]
-    one 
-    one too 
-    one two 
-    me too 
-    not two 
+		one 
+		one too 
+		one two 
+		me too 
+		not two 
 \end{Verbatim}
 
 Using |\verb!:h :undo!| is useful if you know what change you want to jump to.
@@ -143,9 +148,9 @@ To see what branches there are in the undo tree use this command:
 
 \begin{Verbatim}[samepage=true]
  :undolist
-    number changes  time 
-         3       2  16 seconds ago
-         4       3  5 seconds ago
+	number changes  time 
+		 3       2  16 seconds ago
+		 4       3  5 seconds ago
 \end{Verbatim}
 
 Here you can see the number of the leaves in each branch and when the change was made.

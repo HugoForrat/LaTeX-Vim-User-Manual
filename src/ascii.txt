@@ -1,0 +1,37 @@
+p.14 :
+		+-----------------------+
+		|some line              |
+		|last line              |
+		|~                      |
+		|~                      |
+		+-----------------------+
+
+		+-----------------------+
+		|first line             |
+		|second line            |
+		|@                      |
+		|@                      |
+		+-----------------------+
+
+p15
+
+		+-----------------------+
+		|first line             |
+		|second line            |
+		|a very long line that d|
+		|oesn't fit in the wi@@@|
+		+-----------------------+
+
+p16
+
+				+-------------------------------+
+screen  | window 1   | window 2         |
+				|            |                  |
+				|            |                  |
+				|= status line =|= status line =|
+				| window 3                      |
+				|                               |
+				|                               |
+				|==== status line ==============|
+				|command line                   |
+				+-------------------------------+
